@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DrinkDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/up"
+        android:layout_width= "match_parent"
+        android:layout_height= "wrap_content" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id= "@+id/toolbar"
+            android:textAlignment="center"
+            android:layout_width= "match_parent"
+            android:layout_height= "?attr/actionBarSize"
+            android:background= "@color/colorAppBar"
+            android:gravity="center_horizontal" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/drink_poster"
+        android:layout_below="@+id/up"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"/>
+
+    <LinearLayout
+        android:id="@+id/details"
+        android:layout_below="@+id/drink_poster"
+        android:orientation="vertical"
+        android:layout_marginLeft="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/drink_name"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            android:text="@string/white_claw_black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
+
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:rating="4.5"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/rating"
+                android:textSize="12sp"
+                android:text="@string/_4_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/drink_price"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"
+            android:text="@string/_45_00"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:text="@string/product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/drink_description"
+            android:text="@string/product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textStyle="bold"
+            android:text="@string/category"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/drink_category"
+            android:text="@string/vodka"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/details"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:text="@string/add_to_cart"
+            android:layout_weight="1"
+            android:background="@color/blue_for_buttons"
+            android:layout_marginLeft="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp" />
+
+        <TextView
+            android:layout_weight="1.8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:text="@string/buy_now"
+            android:layout_weight="1"
+            android:background="@color/colorAppBar"
+            android:layout_marginRight="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

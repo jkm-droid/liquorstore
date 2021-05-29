@@ -1,0 +1,38 @@
+<?xml version= "1.0" encoding= "utf-8" ?>
+<RelativeLayout
+    xmlns:android= "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width= "match_parent"
+    android:layout_height= "match_parent"
+    tools:context= "jkmdroid.liquorstore.MainActivity" >
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/up"
+        android:layout_width= "match_parent"
+        android:layout_height= "wrap_content" >
+        <androidx.appcompat.widget.Toolbar
+            android:id= "@+id/toolbar"
+            android:layout_width= "match_parent"
+            android:layout_height= "?attr/actionBarSize"
+            android:background= "@color/colorAppBar"/>
+    </com.google.android.material.appbar.AppBarLayout>
+    <RelativeLayout
+        android:id="@+id/mainFrame"
+        android:layout_below="@+id/up"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAppBar">
+        </com.google.android.material.tabs.TabLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_above="@id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</RelativeLayout>

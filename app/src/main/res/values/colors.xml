@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#0E73C2</color>
+    <color name="purple_500">#0E73C2</color>
+    <color name="purple_700">#0E73C2</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#817A79</color>
+    <color name="colorProgress">#E8E3E3</color>
+    <color name="colorAppBar">#E8E3E3</color>
+    <color name="colorLists">#FCFAF6F6</color>
+    <color name="colorSplashScreen">#C3DBE6</color>
+    <color name="colorPrimaryDark">#535151</color>
+    <color name="blue_for_buttons">#0E73C2</color>
+    <color name="vip_status">#12D41A</color>
+    <color name="green">#349038</color>
+    <color name="errorColor">#DB080F</color>
+    <color name="faded">#E4E0E0</color>
+    <color name="backgroundApp">#0C0C0C</color>
+    <color name="homeTabs">#FCFAF6F6</color>
+    <color name="colorVIP1">#FF5722</color>
+    <color name="colorVIP2">#FFC107</color>
+</resources>
