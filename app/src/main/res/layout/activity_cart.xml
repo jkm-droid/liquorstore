@@ -1,9 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CartActivity">
+    tools:context=".DrinksActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/up"
+        android:layout_width= "match_parent"
+        android:layout_height= "wrap_content" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id= "@+id/toolbar"
+            android:textAlignment="center"
+            android:layout_width= "match_parent"
+            android:layout_height= "?attr/actionBarSize"
+            android:background= "@color/colorAppBar"
+            android:gravity="center_horizontal" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:id="@+id/loading"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/empty_cart"
+        android:visibility="gone"
+        android:layout_marginTop="150dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/shopping_cart"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+
+    <TextView
+        android:id="@+id/empty_message"
+        android:visibility="gone"
+        android:text="@string/no_drinks"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <LinearLayout
+        android:id="@+id/layout_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="2dp"
+            android:id="@+id/drinks_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_prices"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/sub_total"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/sub_total"
+                android:text="@string/kshs_400"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:textAlignment="textEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_marginEnd="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/delivery_fee"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/free"
+                android:gravity="end"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/tax"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/kshs_5"
+                android:gravity="end"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
+            android:padding="2dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/total"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/final_total"
+                android:text="@string/kshs_405"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/check_out"
+            android:text="@string/check_out"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

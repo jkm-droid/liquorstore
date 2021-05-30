@@ -3,6 +3,7 @@ package jkmdroid.liquorstore;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,10 @@ import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 /**
  * Created by jkm-droid on 27/05/2021.
@@ -34,6 +38,7 @@ public class FragmentAllDrinks extends Fragment{
     private ArrayList<Drink> drinks;
     TextView errorView, loadingView;
     ImageView imageError, cartView;
+    SqlLiteHelper sqlLiteHelper;
 
     @Nullable
     @Override
@@ -44,6 +49,7 @@ public class FragmentAllDrinks extends Fragment{
         errorView = view.findViewById(R.id.error);
         loadingView = view.findViewById(R.id.loading);
         imageError = view.findViewById(R.id.image_error);
+        sqlLiteHelper = new SqlLiteHelper(getContext());
 
         if (MyHelper.isOnline(getActivity())) {
             loadingView.setVisibility(View.VISIBLE);
@@ -119,7 +125,15 @@ public class FragmentAllDrinks extends Fragment{
             cartView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+                    String name = drinks.get(position).getName(), category = drinks.get(position).getCategory(), posterurl = drinks.get(position).getPosterurl();
+                    int drink_id = drinks.get(position).getId(), price = drinks.get(position).getPrice();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+                    boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
+                    if (isAdded)
+                        Toast.makeText(getActivity(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity(), "Already in Cart", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -127,6 +141,7 @@ public class FragmentAllDrinks extends Fragment{
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
+                    intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
                     intent.putExtra("category", drinks.get(position).getCategory());

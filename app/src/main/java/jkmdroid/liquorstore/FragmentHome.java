@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  * Created by jkm-droid on 27/05/2021.
  */
 
-public class FragmentHome extends Fragment {
+public class FragmentHome extends Fragment{
     private ArrayList<Drink> drinks;
     TextView errorView, loadingView, seeAll;
     ImageView imageError;
@@ -98,7 +99,8 @@ public class FragmentHome extends Fragment {
         if (getContext() == null)
             return;
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), drinks));
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getContext(),drinks);
+        recyclerView.setAdapter(adapter);
 
         if (drinks.size() > 0){
             loadingView.setVisibility(View.GONE);
@@ -109,6 +111,18 @@ public class FragmentHome extends Fragment {
 
     public void setOnFragmentRestart(FragmentAllDrinks.OnFragmentRestart onFragmentRestart) {
         this.onFragmentRestart = onFragmentRestart;
+    }
+
+    public void onItemClick(View view, int position){
+        Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
+        intent.putExtra("drink_id", drinks.get(position).getId());
+        intent.putExtra("name", drinks.get(position).getName());
+        intent.putExtra("price", drinks.get(position).getPrice());
+        intent.putExtra("category", drinks.get(position).getCategory());
+        intent.putExtra("description", drinks.get(position).getDescription());
+        intent.putExtra("posterurl", drinks.get(position).getPosterurl());
+
+        startActivity(intent);
     }
 
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -160,6 +174,7 @@ public class FragmentHome extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
+                    intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
                     intent.putExtra("category", drinks.get(position).getCategory());

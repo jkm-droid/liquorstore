@@ -43,4 +43,15 @@
     <string name="product_details">Product Details</string>
     <string name="cart">cart</string>
     <string name="_0">0</string>
+    <string name="qty">Qty</string>
+    <string name="delivery_fee">Delivery Fee</string>
+    <string name="free">Free</string>
+    <string name="kshs_400">Kshs 400</string>
+    <string name="sub_total">Sub Total</string>
+    <string name="no_drinks">No drinks</string>
+    <string name="kshs_405">Kshs 405</string>
+    <string name="total">Total</string>
+    <string name="tax">Tax</string>
+    <string name="kshs_5">Kshs 5</string>
+    <string name="check_out">Check Out</string>
 </resources>

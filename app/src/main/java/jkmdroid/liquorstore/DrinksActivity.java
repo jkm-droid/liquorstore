@@ -221,6 +221,7 @@ public class DrinksActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(), DrinkDetailsActivity.class);
+                    intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
                     intent.putExtra("category", drinks.get(position).getCategory());
