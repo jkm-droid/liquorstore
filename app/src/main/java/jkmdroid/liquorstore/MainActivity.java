@@ -46,7 +46,7 @@ import java.util.ArrayList;
  * Created by jkm-droid on 27/05/2021.
  */
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     TabLayout tabLayout;
     ViewPager viewPager;
     int selectedTab = 0;
@@ -54,31 +54,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean stopThread = false;
     FragmentHome fragmentHome;
     FragmentAllDrinks fragmentAllDrinks;
-    private ArrayList<Drink>  homeDetails, allDrinks;
+    private ArrayList<Drink> homeDetails, allDrinks;
     boolean requestSuccessful = false;
-    TextView textCartItemCount;
-    int mCartItemCount = 10;
+    TextView cartView;
+    SqlLiteHelper sqlLiteHelper;
 
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
-        setSupportActionBar(toolbar) ;
-        drawer = findViewById(R.id.drawer_layout) ;
+        setSupportActionBar(toolbar);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer , toolbar , R.string.navigation_drawer_open ,
-                R.string.navigation_drawer_close) ;
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = findViewById(R.id.nav_view ) ;
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
         start_drinks();
     }
-    void start_drinks(){
+
+    void start_drinks() {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null)
@@ -107,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab){
+            public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab){
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         stopThread = true;
     }
@@ -147,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat. START )) {
-            drawer.closeDrawer(GravityCompat. START ) ;
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Do you really want to exit?")
@@ -166,9 +168,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String string = "https://play.google.com/store/apps/details?id=jkmdroid.liquorstore";
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem){
-        if (drawer.isDrawerOpen(GravityCompat. START )){
-            drawer.closeDrawer(GravityCompat. START ) ;
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         }
 
         switch (menuItem.getItemId()) {
@@ -192,20 +194,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent i = new Intent(Intent.ACTION_VIEW);
 
                 try {
-                    String url = "https://api.whatsapp.com/send?phone="+
-                            URLEncoder.encode("+254738801655", "UTF-8") +"&text=" + URLEncoder.encode("Hello Infinity Movies", "UTF-8");
+                    String url = "https://api.whatsapp.com/send?phone=" +
+                            URLEncoder.encode("+254738801655", "UTF-8") + "&text=" + URLEncoder.encode("Hello Infinity Movies", "UTF-8");
                     i.setPackage("com.whatsapp");
                     i.setData(Uri.parse(url));
                     if (i.resolveActivity(packageManager) != null) {
                         startActivity(i);
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             case R.id.email:
                 Intent email = new Intent(Intent.ACTION_SEND);
-                email.putExtra(Intent.EXTRA_EMAIL, new String[]{ "infinitymovies23@gmail.com"});
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"infinitymovies23@gmail.com"});
                 email.putExtra(Intent.EXTRA_SUBJECT, "");
                 email.putExtra(Intent.EXTRA_TEXT, "Hello Infinity Movies");
 
@@ -221,15 +223,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(Intent.createChooser(intent1, "Choose browser"));
                 break;
             case R.id.share_button:
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "Hello Liquor Store");
-                        intent.putExtra(Intent.EXTRA_TEXT, string);
-                        startActivity(Intent.createChooser(intent, "Share with"));
-                    } catch (ActivityNotFoundException ex) {
-                        Toast.makeText(MainActivity.this, "Whatsapp have not been installed.", Toast.LENGTH_SHORT).show();
-                    }
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Hello Liquor Store");
+                    intent.putExtra(Intent.EXTRA_TEXT, string);
+                    startActivity(Intent.createChooser(intent, "Share with"));
+                } catch (ActivityNotFoundException ex) {
+                    Toast.makeText(MainActivity.this, "Whatsapp have not been installed.", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
         }
@@ -242,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final MenuItem menuItem = menu.findItem(R.id.cart);
 
         View actionView = menuItem.getActionView();
-        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        cartView = (TextView) actionView.findViewById(R.id.cart_badge);
 
         setupBadge();
 
@@ -257,18 +259,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupBadge() {
-        if (textCartItemCount != null) {
-            if (mCartItemCount == 0) {
-                if (textCartItemCount.getVisibility() != View.GONE) {
-                    textCartItemCount.setVisibility(View.GONE);
-                }
-            } else {
-                textCartItemCount.setText(String.valueOf(Math.min(mCartItemCount, 99)));
-                if (textCartItemCount.getVisibility() != View.VISIBLE) {
-                    textCartItemCount.setVisibility(View.VISIBLE);
-                }
-            }
+        if (cartView != null) {
+            cartView.setText(""+sqlLiteHelper.count_drinks());
+            cartView.setOnClickListener(v -> {
+                startActivity(new Intent(getApplicationContext(), CartActivity.class));
+            });
         }
+
     }
 
     @Override

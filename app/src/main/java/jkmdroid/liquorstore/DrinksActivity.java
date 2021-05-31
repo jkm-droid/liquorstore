@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -42,14 +44,15 @@ public class DrinksActivity extends AppCompatActivity {
     boolean stopThread = false;
     RecyclerView recyclerView;
     private ArrayList<Drink>  categoryDrinks;
+    TextView cartView;
+    SqlLiteHelper sqlLiteHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category_drinks);
 
+        sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
         recyclerView = findViewById(R.id.drinks_recyclerview);
-
-
 
         errorView = findViewById(R.id.error);
         loadingView = findViewById(R.id.loading);
@@ -77,6 +80,30 @@ public class DrinksActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         getDrinks(keyword);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cart, menu);
+        final MenuItem menuItem = menu.findItem(R.id.cart);
+
+        View actionView = menuItem.getActionView();
+        cartView = actionView.findViewById(R.id.cart_badge);
+
+        setupBadge();
+
+        actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
+
+        return true;
+    }
+
+    private void setupBadge() {
+        if (cartView != null) {
+            cartView.setText(""+sqlLiteHelper.count_drinks());
+            cartView.setOnClickListener(v -> {
+                startActivity(new Intent(getApplicationContext(), CartActivity.class));
+            });
+        }
+
     }
     private ArrayList<Drink> extractDrinks(JSONObject response) {
         JSONArray array;

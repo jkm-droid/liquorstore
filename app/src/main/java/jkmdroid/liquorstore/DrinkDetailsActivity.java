@@ -7,6 +7,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +31,8 @@ public class DrinkDetailsActivity extends AppCompatActivity {
     String name, category, description, posterurl;
     int price, drink_id;
     SqlLiteHelper sqlLiteHelper;
+    TextView cartView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +98,36 @@ public class DrinkDetailsActivity extends AppCompatActivity {
             else
                 Toast.makeText(getApplicationContext(), "Already in Cart", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cart, menu);
+        final MenuItem menuItem = menu.findItem(R.id.cart);
+
+        View actionView = menuItem.getActionView();
+        cartView = (TextView) actionView.findViewById(R.id.cart_badge);
+
+        setupBadge();
+
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
+
+        return true;
+    }
+
+    private void setupBadge() {
+        if (cartView != null) {
+            cartView.setText(""+sqlLiteHelper.count_drinks());
+            cartView.setOnClickListener(v -> {
+                startActivity(new Intent(getApplicationContext(), CartActivity.class));
+            });
+        }
+
     }
 
 }
