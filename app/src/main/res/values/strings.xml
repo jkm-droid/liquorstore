@@ -51,7 +51,17 @@
     <string name="no_drinks">No drinks</string>
     <string name="kshs_405">Kshs 405</string>
     <string name="total">Total</string>
-    <string name="tax">Tax</string>
+    <string name="tax">Package</string>
     <string name="kshs_5">Kshs 5</string>
     <string name="check_out">Check Out</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="lipa_na_m_pesa">LIPA NA M-PESA</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="add_another_location">Add another location</string>
+    <string name="sunfield_house">Sunfield House</string>
+    <string name="juja_gatundu_road">Juja, Gatundu Road</string>
+    <string name="total_kshs_4_000">Total: Kshs 4,000</string>
+    <string name="confirm_order">Confirm order</string>
+    <string name="amount_payable_is_for_4_item_s_6_qty_s">Amount payable is for 4 item(s), 6 Qty(s).</string>
+    <string name="amount_payable_is_for">Amount payable is for:</string>
 </resources>

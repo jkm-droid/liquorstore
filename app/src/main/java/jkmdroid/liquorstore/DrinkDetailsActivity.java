@@ -18,7 +18,9 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-
+/**
+ * Created by jkmdroid on 5/28/21.
+ */
 public class DrinkDetailsActivity extends AppCompatActivity {
 
     TextView textName, textPrice, textDescription, textCategory;
@@ -75,17 +77,18 @@ public class DrinkDetailsActivity extends AppCompatActivity {
         }else{
             drinkImage.setImageResource(R.drawable.broken_image);
         }
-
+        int quantity = 1;
         buyNow.setOnClickListener(v -> {
 ;
             @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            sqlLiteHelper.insert_drink(drink_id, name, price, category, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
+
+            sqlLiteHelper.insert_drink(drink_id, name, price, category, quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
             startActivity(new Intent(getApplicationContext(), CartActivity.class));
         });
 
         addToCart.setOnClickListener(v ->{
             @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
+            boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category,quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
             if (isAdded)
                 Toast.makeText(getApplicationContext(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
             else

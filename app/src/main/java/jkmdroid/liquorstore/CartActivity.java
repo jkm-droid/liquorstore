@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -30,11 +33,12 @@ public class CartActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView textView;
     SqlLiteHelper sqlLiteHelper;
-    String drink_id, name, price, category, posterurl;
+    String drink_id, name, price, category,quantity, posterurl;
     TextView emptyMessage;
     ImageView emptyCart;
     LinearLayout linearLayout;
-    TextView subTotalView, finalTotalView;
+    TextView subTotalView, finalTotalView, packView;
+    Button checkoutButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +51,12 @@ public class CartActivity extends AppCompatActivity {
 
         subTotalView = findViewById(R.id.sub_total);
         finalTotalView = findViewById(R.id.final_total);
+        packView = findViewById(R.id.package_fee);
+
+        checkoutButton = findViewById(R.id.check_out);
+        checkoutButton.setOnClickListener(v -> {
+            startActivity(new Intent(CartActivity.this, CheckOutActivity.class));
+        });
 
         sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
         recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
@@ -73,17 +83,17 @@ public class CartActivity extends AppCompatActivity {
         if (cursor != null && cursor.getCount() > 0){
 
             while (cursor.moveToNext()){
-
-                price = cursor.getString(3);
+                price = cursor.getString(6);//contains the total prices based on drink quantity
                 totalPrice += Integer.parseInt(price);
-
             }
             cursor.close();
         }
-        subTotalView.setText(""+totalPrice);
-        int finalCost = totalPrice + (5 * cursor.getCount());
-        finalTotalView.setText(""+finalCost);
-        System.out.println(finalCost+"----------------------------------");
+        DecimalFormat format = new DecimalFormat("#,###,###");
+        int finalCost = totalPrice + (10 * cursor.getCount());
+
+        subTotalView.setText("Kshs "+format.format(totalPrice));
+        packView.setText("Kshs "+(10 * cursor.getCount()));
+        finalTotalView.setText("Kshs "+format.format(finalCost));
     }
 
     private ArrayList<Drink> writeDrinks() {
@@ -97,12 +107,14 @@ public class CartActivity extends AppCompatActivity {
                 name = cursor.getString(2);
                 price = cursor.getString(3);
                 category = cursor.getString(4);
-                posterurl = cursor.getString(5);
+                quantity = cursor.getString(5);
+                posterurl = cursor.getString(7);
 
                 drink.setId(Integer.parseInt(drink_id));
                 drink.setName(name);
                 drink.setPrice(Integer.parseInt(price));
                 drink.setCategory(category);
+                drink.setQuantity(Integer.parseInt(quantity));
                 drink.setPosterurl(posterurl);
 
                 drinks.add(drink);
@@ -125,14 +137,14 @@ public class CartActivity extends AppCompatActivity {
         // stores and recycles views as they are scrolled off screen
         public class ViewHolder extends RecyclerView.ViewHolder{
             ImageView drinkPoster, cancelDrink;
-            TextView priceView, nameView, totalDrinks, minus, add;
+            TextView priceView, nameView, quantityView, minus, add;
             ViewHolder(View v) {
                 super(v);
                 drinkPoster = (ImageView)v.findViewById(R.id.drink_poster);
                 cancelDrink = (ImageView)v.findViewById(R.id.cancel_drink);
                 priceView = (TextView)v.findViewById(R.id.drink_price);
                 nameView = (TextView)v.findViewById(R.id.drink_name);
-                totalDrinks = (TextView)v.findViewById(R.id.total_drinks);
+                quantityView = (TextView)v.findViewById(R.id.quantity);
                 minus = (TextView)v.findViewById(R.id.minus);
                 add = (TextView)v.findViewById(R.id.add);
             }
@@ -161,6 +173,7 @@ public class CartActivity extends AppCompatActivity {
 
             holder.nameView.setText(drinks.get(position).getName());
             holder.priceView.setText("Kshs:"+drinks.get(position).getPrice());
+            holder.quantityView.setText(""+drinks.get(position).getQuantity()+"Qty");
             holder.cancelDrink.setOnClickListener(v -> {
                boolean isRemoved =  sqlLiteHelper.delete_drink(drinks.get(position).getId());
                if (isRemoved) {
@@ -177,9 +190,22 @@ public class CartActivity extends AppCompatActivity {
                    }
                }
             });
-
+            //deduct quantity
             holder.minus.setOnClickListener(v ->{
+                String keyword = "minus";
+                sqlLiteHelper.change_quantity(drinks.get(position).getId(), keyword);
+                int new_quantity = sqlLiteHelper.get_drink_quantity(drinks.get(position).getId());
+                holder.quantityView.setText(""+new_quantity+"Qty");
+                calculatePrices();
+            });
 
+            //add quantity
+            holder.add.setOnClickListener(v ->{
+                String keyword = "add";
+                sqlLiteHelper.change_quantity(drinks.get(position).getId(), keyword);
+                int new_quantity = sqlLiteHelper.get_drink_quantity(drinks.get(position).getId());
+                holder.quantityView.setText(""+new_quantity+"Qty");
+                calculatePrices();
             });
         }
 

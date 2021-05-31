@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CheckOutActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/up"
+        android:layout_width= "match_parent"
+        android:layout_height= "wrap_content" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id= "@+id/toolbar"
+            android:textAlignment="center"
+            android:layout_width= "match_parent"
+            android:layout_height= "?attr/actionBarSize"
+            android:background= "@color/colorAppBar"
+            android:gravity="center_horizontal" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:text="@string/payment_method"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="@string/lipa_na_m_pesa"
+        android:padding="5dp"
+        android:layout_marginLeft="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/payment" />
+
+    <TextView
+        android:text="@string/delivery_address"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="@string/juja_gatundu_road"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/current_location" />
+
+    <TextView
+        android:text="@string/sunfield_house"
+        android:layout_marginLeft="5dp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/apartment" />
+
+    <TextView
+        android:text="@string/add_another_location"
+        android:layout_marginLeft="5dp"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/add_location" />
+
+    <TextView
+        android:text="@string/amount_payable_is_for"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/message"
+        android:textColor="@color/green"
+        android:text="@string/amount_payable_is_for_4_item_s_6_qty_s"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:background="@drawable/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/total_amount"
+            android:text="@string/total_kshs_4_000"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/confirm_order"
+            android:text="@string/confirm_order"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

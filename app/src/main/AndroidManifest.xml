@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LiquorStore">
-        <activity android:name=".CartActivity"></activity>
+        <activity android:name=".CheckOutActivity"></activity>
+        <activity android:name=".CartActivity" />
         <activity
             android:name=".DrinkDetailsActivity"
             android:parentActivityName=".MainActivity" />

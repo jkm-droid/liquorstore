@@ -128,8 +128,8 @@ public class FragmentAllDrinks extends Fragment{
                     String name = drinks.get(position).getName(), category = drinks.get(position).getCategory(), posterurl = drinks.get(position).getPosterurl();
                     int drink_id = drinks.get(position).getId(), price = drinks.get(position).getPrice();
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
-                    boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
+                    int quantity = 1;
+                    boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category,quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
                     if (isAdded)
                         Toast.makeText(getActivity(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
                     else

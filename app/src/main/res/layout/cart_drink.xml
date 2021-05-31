@@ -97,7 +97,7 @@
                     android:gravity="end" />
 
                 <TextView
-                    android:id="@+id/total_drinks"
+                    android:id="@+id/quantity"
                     android:text="@string/qty"
                     android:gravity="center"
                     android:layout_marginLeft="2dp"

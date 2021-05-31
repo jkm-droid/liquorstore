@@ -11,7 +11,7 @@ import java.util.Date;
 public class Drink {
     private int id;
     private String name;
-    private int price;
+    private int price, quantity;
     private String description;
     private String posterurl;
     private String category;
@@ -40,6 +40,9 @@ public class Drink {
         return category;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -65,6 +68,7 @@ public class Drink {
         this.category = category;
     }
 
-
-
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
