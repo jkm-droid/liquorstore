@@ -139,5 +139,12 @@ public class SqlLiteHelper extends SQLiteOpenHelper {
 
         return quantity;
     }
+
+    //delete all the messages
+    public void delete_all_drinks(){
+        sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.execSQL("delete from " + TABLE_NAME);
+        sqLiteDatabase.close();
+    }
 }
 

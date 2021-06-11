@@ -3,12 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="Contact Us">
+
+    <item
+        android:id="@+id/cart"
+        android:icon="@drawable/shopping_cart"
+        android:title="@string/my_cart" />
+    <item
+        android:id="@+id/order_status"
+        android:icon="@drawable/waiting"
+        android:title="@string/order_status" />
+    <item
+        android:id="@+id/categories"
+        android:icon="@drawable/alldrinks"
+        android:title="@string/categories" />
+
+
+    <item android:title="@string/contact_us">
         <menu>
             <item
                 android:id="@+id/email"
                 android:icon="@drawable/email"
-                android:title="Email" />
+                android:title="@string/email" />
             <item
                 android:id="@+id/whatsapp"
                 android:icon="@drawable/whatsapp"
@@ -30,11 +45,11 @@
             <item
                 android:id="@+id/privacy"
                 android:icon="@drawable/privacy"
-                android:title="Privacy" />
+                android:title="@string/privacy" />
             <item
                 android:id="@+id/terms"
                 android:icon="@drawable/terms"
-                android:title="Terms" />
+                android:title="@string/terms" />
         </menu>
     </item>
     <item android:title="@string/developers">

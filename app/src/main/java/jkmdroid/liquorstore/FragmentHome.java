@@ -8,17 +8,24 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.work.impl.background.systemalarm.SystemAlarmService;
 
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 /**
  * Created by jkm-droid on 27/05/2021.
@@ -31,6 +38,10 @@ public class FragmentHome extends Fragment{
     FragmentAllDrinks.OnFragmentRestart onFragmentRestart;
     RecyclerView recyclerView;
     ImageView whiskey, beer, vodka, gin;
+    LinearLayout linearLayout;
+    ViewFlipper viewFlipper;
+    Toolbar toolbar;
+    AppBarLayout appBarLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -42,6 +53,55 @@ public class FragmentHome extends Fragment{
         vodka = view.findViewById(R.id.vodka);
         gin = view.findViewById(R.id.gin);
 
+        linearLayout = view.findViewById(R.id.layout_content);
+
+//        viewFlipper = view.findViewById(R.id.view_flipper);
+        errorView = view.findViewById(R.id.error);
+        loadingView = view.findViewById(R.id.loading);
+        imageError = view.findViewById(R.id.image_error);
+
+        if (MyHelper.isOnline(getActivity())) {
+            loadingView.setVisibility(View.VISIBLE);
+            loadingView.setText("Loading drinks....");
+        }else {
+            imageError.setVisibility(View.VISIBLE);
+            errorView.setVisibility(View.VISIBLE);
+            errorView.setText("There is no internet connection!!");
+        }
+
+//        int[] images = {
+//                R.drawable.slide0, R.drawable.slide1, R.drawable.slide2,
+//                R.drawable.slide3, R.drawable.slide4, R.drawable.slide5,
+//                R.drawable.slide6, R.drawable.slide7, R.drawable.slide8,
+//                R.drawable.slide9
+//        };
+//
+//        for (int image : images)
+//            initFlipper(image);
+
+        moveToDrinksActivity();
+
+        GridLayout gridLayout = new GridLayout(getActivity());
+        gridLayout.addView(view);
+
+        if (onFragmentRestart != null)
+            onFragmentRestart.onMoviesReceived();
+
+        return gridLayout;
+    }
+
+//    private void initFlipper(int image) {
+//        ImageView imageView = new ImageView(getActivity());
+//        imageView.setBackgroundResource(image);
+//        viewFlipper.addView(imageView);
+//        viewFlipper.setFlipInterval(3000);
+//        viewFlipper.setAutoStart(true);
+//
+//        viewFlipper.setInAnimation(getActivity(), android.R.anim.slide_in_left);
+//        viewFlipper.setOutAnimation(getActivity(), android.R.anim.slide_out_right);
+//    }
+
+    private void moveToDrinksActivity() {
         whiskey.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), DrinksActivity.class);
             intent.putExtra("keyword", "whiskey");
@@ -67,62 +127,28 @@ public class FragmentHome extends Fragment{
             intent.putExtra("keyword", "all_drinks");
             startActivity(intent);
         });
-
-        errorView = view.findViewById(R.id.error);
-        loadingView = view.findViewById(R.id.loading);
-        imageError = view.findViewById(R.id.image_error);
-
-        if (MyHelper.isOnline(getActivity())) {
-            loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading details....");
-        }else {
-            imageError.setVisibility(View.VISIBLE);
-            errorView.setVisibility(View.VISIBLE);
-            errorView.setText("There is no internet connection!!");
-        }
-
-        GridLayout gridLayout = new GridLayout(getActivity());
-        gridLayout.addView(view);
-
-        if (onFragmentRestart != null)
-            onFragmentRestart.onMoviesReceived();
-
-        return gridLayout;
     }
 
     public void setDrinks(ArrayList<Drink> drinks){
         this.drinks = drinks;
-        if (drinks == null) {
-            imageError.setVisibility(View.VISIBLE);
-            errorView.setText("No drinks found");
-        }
+
         if (getContext() == null)
             return;
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getContext(),drinks);
-        recyclerView.setAdapter(adapter);
-
         if (drinks.size() > 0){
             loadingView.setVisibility(View.GONE);
             imageError.setVisibility(View.GONE);
             errorView.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
         }
+
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getContext(),drinks);
+        recyclerView.setAdapter(adapter);
+
     }
 
     public void setOnFragmentRestart(FragmentAllDrinks.OnFragmentRestart onFragmentRestart) {
         this.onFragmentRestart = onFragmentRestart;
-    }
-
-    public void onItemClick(View view, int position){
-        Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
-        intent.putExtra("drink_id", drinks.get(position).getId());
-        intent.putExtra("name", drinks.get(position).getName());
-        intent.putExtra("price", drinks.get(position).getPrice());
-        intent.putExtra("category", drinks.get(position).getCategory());
-        intent.putExtra("description", drinks.get(position).getDescription());
-        intent.putExtra("posterurl", drinks.get(position).getPosterurl());
-
-        startActivity(intent);
     }
 
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -137,12 +163,13 @@ public class FragmentHome extends Fragment{
         // stores and recycles views as they are scrolled off screen
         public class ViewHolder extends RecyclerView.ViewHolder{
             ImageView drinkPoster;
-            TextView priceView, nameView;
+            TextView priceView, nameView, ratingView;
             ViewHolder(View v) {
                 super(v);
                 drinkPoster = (ImageView)v.findViewById(R.id.drink_poster);
                 priceView = (TextView)v.findViewById(R.id.drink_price);
                 nameView = (TextView)v.findViewById(R.id.drink_name);
+                ratingView = (TextView)v.findViewById(R.id.rating);
             }
 
         }
@@ -168,12 +195,14 @@ public class FragmentHome extends Fragment{
             }
 
             holder.nameView.setText(drinks.get(position).getName());
-            holder.priceView.setText("Kshs:"+drinks.get(position).getPrice());
+            holder.priceView.setText("Ksh:"+drinks.get(position).getPrice());
+            holder.ratingView.setText(MyHelper.generateRating());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra("activity", "main_activity");
                     intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
@@ -193,5 +222,6 @@ public class FragmentHome extends Fragment{
         }
 
     }
+
 
 }

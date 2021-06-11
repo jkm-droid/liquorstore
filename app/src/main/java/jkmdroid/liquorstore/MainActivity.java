@@ -7,16 +7,22 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -58,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean requestSuccessful = false;
     TextView cartView;
     SqlLiteHelper sqlLiteHelper;
+    Intent intent;
+    MenuItem menuItemCart;
+    ViewFlipper viewFlipper;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,16 +75,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
+        toolbar.setTitleTextColor(getResources().getColor(R.color.blue_for_buttons));
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open,
+                this, drawer,toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
+        viewFlipper = findViewById(R.id.view_flipper);
 
         start_drinks();
     }
@@ -126,9 +137,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         tabLayout.getTabAt(selectedTab).select();
-        getdrinks();
+        int[] images = {
+                R.drawable.slide0, R.drawable.slide1, R.drawable.slide2,
+                R.drawable.slide3, R.drawable.slide4, R.drawable.slide5,
+                R.drawable.slide6, R.drawable.slide7, R.drawable.slide8,
+                R.drawable.slide9
+        };
+
+        for (int image : images)
+            initFlipper(image);
+
+        getDrinks();
     }
 
+    private void initFlipper(int image) {
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setBackgroundResource(image);
+        imageView.setImageAlpha(200);
+        viewFlipper.addView(imageView);
+        viewFlipper.setFlipInterval(3000);
+        viewFlipper.setAutoStart(true);
+
+        viewFlipper.setInAnimation(getApplicationContext(), android.R.anim.slide_in_left);
+        viewFlipper.setOutAnimation(getApplicationContext(), android.R.anim.slide_out_right);
+    }
 
     @Override
     protected void onDestroy() {
@@ -155,13 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Do you really want to exit?")
                     .setNegativeButton("Cancel", null)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            finish();
-                        }
-                    }).create().show();
+                    .setPositiveButton("OK", (dialogInterface, i) -> finish()).create().show();
         }
     }
 
@@ -174,6 +200,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         switch (menuItem.getItemId()) {
+            case R.id.order_status:
+                startActivity(new Intent(MainActivity.this, OrderActivity.class));
+                break;
+            case R.id.cart:
+                intent = new Intent(MainActivity.this, OrderActivity.class);
+                intent.putExtra("activity", "main_activity");
+                startActivity(intent);
+                finish();
+                break;
             case R.id.privacy:
                 Intent privacy = new Intent(Intent.ACTION_VIEW);
                 privacy.setData(Uri.parse("https://infinity.mblog.co.ke/info/privacy.html"));
@@ -241,43 +276,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.cart, menu);
-        final MenuItem menuItem = menu.findItem(R.id.cart);
+        menuItemCart = menu.findItem(R.id.cart);
 
-        View actionView = menuItem.getActionView();
-        cartView = (TextView) actionView.findViewById(R.id.cart_badge);
-
+        View actionView = menuItemCart.getActionView();
+        cartView = actionView.findViewById(R.id.cart_badge);
         setupBadge();
 
-        actionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected(menuItem);
-            }
+        actionView.setOnClickListener(v -> {
+            onOptionsItemSelected(menuItemCart);
+            intent = new Intent(getApplicationContext(), CartActivity.class);
+            intent.putExtra("activity", "main_activity");
+            startActivity(intent);
+            finish();
         });
 
         return true;
     }
 
     private void setupBadge() {
-        if (cartView != null) {
-            cartView.setText(""+sqlLiteHelper.count_drinks());
-            cartView.setOnClickListener(v -> {
-                startActivity(new Intent(getApplicationContext(), CartActivity.class));
-            });
-        }
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.cart) {
-            try {
-                startActivity(new Intent(MainActivity.this, CartActivity.class));
-            } catch (ActivityNotFoundException ex) {
-                Toast.makeText(MainActivity.this, "Whatsapp have not been installed.", Toast.LENGTH_SHORT).show();
-            }
-        }
-        return super.onOptionsItemSelected(item);
+        cartView.setText(""+sqlLiteHelper.count_drinks());
+        cartView.setOnClickListener(v -> {
+            intent = new Intent(getApplicationContext(), CartActivity.class);
+            intent.putExtra("activity", "main_activity");
+            startActivity(intent);
+            finish();
+        });
     }
 
     private ArrayList<Drink> extractDrinks(JSONObject response) {
@@ -306,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return drinks;
     }
 
-    private void getdrinks() {
+    private void getDrinks() {
         @SuppressLint("HandlerLeak") Handler handler = new Handler(){
             @SuppressLint("HandlerLeak")
             @Override

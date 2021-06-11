@@ -28,14 +28,31 @@
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
     <TextView
-        android:text="@string/lipa_na_m_pesa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:layout_marginLeft="4dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:drawableLeftCompat="@drawable/payment" />
+        android:text="@string/select_payment_method"
+        android:layout_marginStart="4dp" />
+    <RadioGroup
+        android:id="@+id/cash_mpesa"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/lipa_mpesa"
+            android:text="@string/lipa_na_m_pesa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:id="@+id/cash_delivery"
+            android:text="@string/cash_on_delivery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RadioGroup>
 
     <TextView
         android:text="@string/delivery_address"

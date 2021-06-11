@@ -7,18 +7,40 @@
     android:layout_height= "match_parent"
     tools:context= "jkmdroid.liquorstore.MainActivity" >
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/up"
+        android:id="@+id/app_bar"
+        android:fitsSystemWindows="true"
         android:layout_width= "match_parent"
         android:layout_height= "wrap_content" >
-        <androidx.appcompat.widget.Toolbar
-            android:id= "@+id/toolbar"
-            android:layout_width= "match_parent"
-            android:layout_height= "?attr/actionBarSize"
-            android:background= "@color/colorAppBar"/>
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:fitsSystemWindows="true"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleTextAppearance="@android:color/white"
+            app:collapsedTitleTextAppearance="@color/green"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ViewFlipper
+                android:id="@+id/view_flipper"
+                android:requiresFadingEdge="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"/>
+            <androidx.appcompat.widget.Toolbar
+                android:id= "@+id/toolbar"
+                app:layout_collapseMode="pin"
+                app:titleTextColor="#FF9800"
+                android:layout_width= "match_parent"
+                android:layout_height= "?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:gravity="center_horizontal" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
     <RelativeLayout
         android:id="@+id/mainFrame"
-        android:layout_below="@+id/up"
+        android:layout_below="@+id/app_bar"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

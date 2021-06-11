@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 /**
@@ -21,91 +22,24 @@ import java.util.Calendar;
  */
 
 public class MyHelper {
+    public static String generateRating() {
+        double min = 4.0, max = 4.7;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.0");
+        double rating = min + Math.random() * (max - min);
+        return decimalFormat.format(rating);
+    }
+
+    public static String capitalizeCategory(String word){
+        String firstLetter = word.substring(0,1);
+        String otherLetters = word.substring(1, word.length());
+        firstLetter = firstLetter.toUpperCase();
+
+        return firstLetter + otherLetters;
+    }
     public static boolean isOnline(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return manager.getActiveNetworkInfo() != null && manager.getActiveNetworkInfo().isConnectedOrConnecting();
-    }
-
-    public static String toPostDate(long millis) {
-        Calendar calendar = Calendar.getInstance();
-        int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-        calendar.setTimeInMillis(millis);
-        if (millis < System.currentTimeMillis()){
-            if (dayOfYear == calendar.get(Calendar.DAY_OF_YEAR)) {
-                if (hour == calendar.get(Calendar.HOUR_OF_DAY)) {
-                    return "Started "+(minute - calendar.get(Calendar.MINUTE)) + " minutes ago";
-                }
-                return "Today, "+DateFormat.format("hh:mm a", millis).toString();
-            } else if (dayOfYear - calendar.get(Calendar.DAY_OF_YEAR) == 1) {
-                return "Yesterday, " + DateFormat.format("hh:mm a", millis).toString();
-            } else if (weekOfYear == calendar.get(Calendar.WEEK_OF_YEAR)) {
-                return DateFormat.format("E, hh:mm a", millis).toString();
-            }
-        }else {
-            if (dayOfYear == calendar.get(Calendar.DAY_OF_YEAR)){
-                if (calendar.get(Calendar.HOUR_OF_DAY) <= 1+hour){
-                    return (calendar.get(Calendar.MINUTE)-minute) + " minutes remaining";
-                }
-                return "Today "+DateFormat.format("hh:mm a", millis).toString();
-            } else if (dayOfYear - calendar.get(Calendar.DAY_OF_YEAR) == -1){
-                return "Tomorrow, " + DateFormat.format("hh:mm a", millis).toString();
-            }
-            else if (weekOfYear == calendar.get(Calendar.WEEK_OF_YEAR)) {
-                return DateFormat.format("E, hh:mm a", millis).toString();
-            }
-        }
-        return DateFormat.format("dd MMM yyyy, hh:mm a", millis).toString();
-    }
-
-    public static void writeError(String error){
-        String fileName = "Error.txt";
-        try {
-            System.out.println("Writing ("+error+")");
-            File root = new File(Environment.getExternalStorageDirectory(),"odds");
-            if (!root.exists()){
-                root.mkdirs();
-            }
-
-            File gpxfile = new File(root, fileName);
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(gpxfile, true));
-            bufferedWriter.append(error);
-            bufferedWriter.newLine();
-            bufferedWriter.close();
-        }catch (IOException e){
-        }
-    }
-
-    public static void restart(){
-        String fileName = "Error.txt";
-        try {
-            File root = new File(Environment.getExternalStorageDirectory(),"golpredicts");
-            File gpxfile = new File(root, fileName);
-            if (!root.exists()){
-                root.mkdirs();
-            }
-            FileWriter writer = new FileWriter(gpxfile, false);
-            writer.write("");
-            writer.flush();
-            writer.close();
-        }catch (IOException e){
-        }
-    }
-    static void runtime() {
-        String fileName = "Error.txt";
-        File root = new File(Environment.getExternalStorageDirectory(),"golpredicts");
-        File gpxfile = new File(root, fileName);
-
-        try {
-            Runtime.getRuntime().exec("logcat -c");
-            Runtime.getRuntime().exec("logcat -v time -f"+gpxfile.getAbsolutePath());
-        } catch (IOException e) {
-            writeError("Error in runtime");
-        }
     }
 
     public static String connectOnline(String link, String encodedData) throws IOException {

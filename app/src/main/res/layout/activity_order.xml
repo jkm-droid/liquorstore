@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OrderActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/up"
+        android:layout_width= "match_parent"
+        android:layout_height= "wrap_content" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id= "@+id/toolbar"
+            android:textAlignment="center"
+            android:layout_width= "match_parent"
+            android:layout_height= "?attr/actionBarSize"
+            android:background= "@color/colorAppBar"
+            android:gravity="center_horizontal" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:id="@+id/loading"
+        android:text="@string/checking_order_status"
+        android:textAlignment="center"
+        android:textColor="@color/green"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/order_number"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <LinearLayout
+        android:id="@+id/layout_pending"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:src="@drawable/waiting"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+        <TextView
+            android:id="@+id/awaiting"
+            android:padding="10dp"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#FF9800"
+            android:text="@string/your_order_has_been_received"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:drawableStartCompat="@drawable/pending"
+            app:drawableLeftCompat="@drawable/pending" />
+        <TextView
+            android:text="@string/pending"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_confirmed"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/delivery"
+            android:src="@drawable/delivery"
+            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+
+        <TextView
+            android:text="@string/your_order_has_been_confirmed"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            android:textColor="#4CAF50"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:drawableStartCompat="@drawable/checked"
+            app:drawableLeftCompat="@drawable/checked" />
+
+        <TextView
+            android:text="@string/our_execute_will_reach_you_with_the_speed_of_lightning"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/shop_more"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textColor="#03A9F4"
+            android:textAlignment="center"
+            android:text="@string/shop_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_delivered"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:src="@drawable/delivered"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+        <TextView
+            android:id="@+id/delivered"
+            android:padding="10dp"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#13A919"
+            android:text="@string/delivered"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:drawableStartCompat="@drawable/delivered"
+            app:drawableLeftCompat="@drawable/delivered" />
+        <TextView
+            android:text="@string/contact"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
+</LinearLayout>

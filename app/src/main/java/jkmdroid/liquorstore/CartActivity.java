@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -12,10 +11,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +38,9 @@ public class CartActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     TextView subTotalView, finalTotalView, packView;
     Button checkoutButton;
+    String activity, activity2, keyword, description;
+    int prices, drink_ids;
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,7 @@ public class CartActivity extends AppCompatActivity {
         checkoutButton = findViewById(R.id.check_out);
         checkoutButton.setOnClickListener(v -> {
             startActivity(new Intent(CartActivity.this, CheckOutActivity.class));
+            finish();
         });
 
         sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
@@ -76,7 +79,62 @@ public class CartActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        get_bundle();
+
     }
+
+    private void get_bundle() {
+        Bundle bundle = getIntent().getExtras();
+        activity = bundle.getString("activity");
+        activity2 = bundle.getString("activity2");
+        keyword = bundle.getString("keyword");
+        drink_ids = bundle.getInt("drink_id");
+        name = bundle.getString("name");
+        category = bundle.getString("category");
+        description = bundle.getString("description");
+        posterurl = bundle.getString("posterurl");
+        prices = bundle.getInt("price");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == 16908332) {
+            back();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void back() {
+        if (activity.equalsIgnoreCase("drinks_activity")) {
+            intent = new Intent(getApplicationContext(), DrinksActivity.class);
+//            intent.putExtra("activity", activity);
+            intent.putExtra("keyword", keyword);
+            startActivity(intent);
+            finish();
+        }else if(activity.equalsIgnoreCase("drinks_details_activity")){
+            intent = new Intent(getApplicationContext(), DetailsActivity.class);
+            intent.putExtra("activity", activity2);
+            intent.putExtra("keyword", keyword);
+            intent.putExtra("drink_id",drink_ids);
+            intent.putExtra("name",name);
+            intent.putExtra("category",category);
+            intent.putExtra("description",description);
+            intent.putExtra("posterurl",posterurl);
+            intent.putExtra("price",prices);
+            startActivity(intent);
+            finish();
+        }else{
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("activity", "trigger_token");
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
     private void calculatePrices(){
         Cursor cursor = sqlLiteHelper.get_drinks();
         int totalPrice = 0;

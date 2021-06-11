@@ -3,34 +3,41 @@ package jkmdroid.liquorstore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Date;
 
 /**
  * Created by jkm-droid on 05/27/2021.
@@ -46,65 +53,168 @@ public class DrinksActivity extends AppCompatActivity {
     private ArrayList<Drink>  categoryDrinks;
     TextView cartView;
     SqlLiteHelper sqlLiteHelper;
+    SearchHelper searchHelper;
+    String keyword;
+    Intent intent;
+    RecyclerViewAdapter adapter;
+    Toolbar toolbar;
+    AppBarLayout appBarLayout;
+    ImageView imagePoster;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category_drinks);
 
+        invalidateOptionsMenu();
+
         sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
+        searchHelper = new SearchHelper(DrinksActivity.this);
         recyclerView = findViewById(R.id.drinks_recyclerview);
+        appBarLayout = findViewById(R.id.app_bar);
 
         errorView = findViewById(R.id.error);
         loadingView = findViewById(R.id.loading);
         imageError = findViewById(R.id.image_error);
+        imagePoster = findViewById(R.id.drink_poster);
 
         if (MyHelper.isOnline(getApplicationContext())) {
             loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading details....");
+            loadingView.setText("Loading drinks....");
         }else {
             imageError.setVisibility(View.VISIBLE);
             errorView.setVisibility(View.VISIBLE);
             errorView.setText("There is no internet connection!!");
         }
         Bundle extras = getIntent().getExtras();
-        String keyword = extras.getString("keyword");
+        keyword = extras.getString("keyword");
+        toolbar = findViewById(R.id.toolbar);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
         if (keyword.contains("_"))
-            toolbar.setTitle(keyword.replace("_", " ").toUpperCase());
+            toolbar.setTitle(MyHelper.capitalizeCategory(keyword).replace("_", " "));
         else
-            toolbar.setTitle(keyword.toUpperCase());
+            toolbar.setTitle(MyHelper.capitalizeCategory(keyword));
+
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar) ;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        setImagePoster(keyword);
+
         getDrinks(keyword);
     }
+
+    private void setImagePoster(String keyword) {
+        if (keyword.equalsIgnoreCase("gin")){
+            Picasso.get()
+                    .load("https://liquorstore.mblog.co.ke/images/gin.jpg")
+                    .fit()
+                    .into(imagePoster);
+        }else if (keyword.equalsIgnoreCase("beer")){
+            Picasso.get()
+                    .load("https://liquorstore.mblog.co.ke/images/beer.jpg")
+                    .fit()
+                    .into(imagePoster);
+        }else if (keyword.equalsIgnoreCase("vodka")){
+            Picasso.get()
+                    .load("https://liquorstore.mblog.co.ke/images/vodka1.jpg")
+                    .fit()
+                    .into(imagePoster);
+        }else if (keyword.equalsIgnoreCase("whiskey")){
+            Picasso.get()
+                    .load("https://liquorstore.mblog.co.ke/images/whiskey.jpeg")
+                    .fit()
+                    .into(imagePoster);
+        }else {
+            Picasso.get()
+                    .load("https://liquorstore.mblog.co.ke/images/slide2.jpg")
+                    .fit()
+                    .into(imagePoster);
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        View viewCart, viewSearch;
+        viewSearch = findViewById(R.id.search);
+        viewCart = findViewById(R.id.cart);
+
+        if (viewSearch instanceof TextView)
+            ((TextView)viewSearch).setTextColor(Color.WHITE);
+        if (viewCart instanceof TextView)
+            ((TextView)viewCart).setTextColor(Color.WHITE);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cart, menu);
-        final MenuItem menuItem = menu.findItem(R.id.cart);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search, menu);
+        inflater.inflate(R.menu.cart, menu);
 
-        View actionView = menuItem.getActionView();
-        cartView = actionView.findViewById(R.id.cart_badge);
+        final MenuItem menuItemCart, menuItemSearch;
+        View actionViewCart;
+
+        menuItemSearch = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItemSearch.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ArrayList<Drink> newDrinks = new ArrayList<>();
+                for (Drink drink : categoryDrinks){
+                    if (drink.getName().toLowerCase().contains(newText.toLowerCase())){
+                        newDrinks.add(drink);
+                    }
+                }
+                adapter.setFilter(newDrinks);
+                return true;
+            }
+        });
+
+
+        menuItemCart = menu.findItem(R.id.cart);
+        actionViewCart = menuItemCart.getActionView();
+        cartView = actionViewCart.findViewById(R.id.cart_badge);
 
         setupBadge();
 
-        actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
+        actionViewCart.setOnClickListener(v -> {
+            onOptionsItemSelected(menuItemCart);
+            intent = new Intent(getApplicationContext(), CartActivity.class);
+            intent.putExtra("activity", "main_activity");
+            startActivity(intent);
+            finish();
+        });
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupBadge() {
         if (cartView != null) {
             cartView.setText(""+sqlLiteHelper.count_drinks());
             cartView.setOnClickListener(v -> {
-                startActivity(new Intent(getApplicationContext(), CartActivity.class));
+                Intent intent = new Intent(getApplicationContext(), CartActivity.class);
+                intent.putExtra("activity","drinks_activity");
+                intent.putExtra("keyword",keyword);
+                startActivity(intent);
+                finish();
             });
         }
 
     }
+
     private ArrayList<Drink> extractDrinks(JSONObject response) {
         JSONArray array;
         JSONObject object;
@@ -122,6 +232,11 @@ public class DrinksActivity extends AppCompatActivity {
                 drink.setDescription(object.getString("drink_description"));
                 drink.setPosterurl(object.getString("posterurl"));
                 drink.setCategory(object.getString("drink_category"));
+                int id = object.getInt("id"), price = object.getInt("drink_price");
+                String name = object.getString("drink_name"), category = object.getString("drink_category"), posterurl = object.getString("posterurl");
+                String description = object.getString("drink_description");
+
+                searchHelper.insert_drink(id, name, price, category, description, posterurl);
 
                 drinks.add(drink);
             }
@@ -189,8 +304,11 @@ public class DrinksActivity extends AppCompatActivity {
         }
         if (getApplicationContext() == null)
             return;
+        appBarLayout.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(new GridLayoutManager(DrinksActivity.this, 3));
-        recyclerView.setAdapter(new RecyclerViewAdapter(DrinksActivity.this, drinks));
+        adapter = new RecyclerViewAdapter(DrinksActivity.this, drinks);
+        recyclerView.setAdapter(adapter);
 
         if (drinks.size() > 0){
             loadingView.setVisibility(View.GONE);
@@ -211,12 +329,15 @@ public class DrinksActivity extends AppCompatActivity {
         // stores and recycles views as they are scrolled off screen
         public class ViewHolder extends RecyclerView.ViewHolder{
             ImageView drinkPoster;
-            TextView priceView, nameView;
+            TextView priceView, nameView, addToCart;
+            TextView ratingView;
             ViewHolder(View v) {
                 super(v);
-                drinkPoster = (ImageView)v.findViewById(R.id.drink_poster);
-                priceView = (TextView)v.findViewById(R.id.drink_price);
-                nameView = (TextView)v.findViewById(R.id.drink_name);
+                drinkPoster = v.findViewById(R.id.drink_poster);
+                priceView = v.findViewById(R.id.drink_price);
+                nameView = v.findViewById(R.id.drink_name);
+                addToCart = v.findViewById(R.id.add_to_cart);
+                ratingView = v.findViewById(R.id.rating);
             }
 
         }
@@ -225,7 +346,7 @@ public class DrinksActivity extends AppCompatActivity {
         @Override
         @NonNull
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.recommended, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.all_drinks, parent, false);
             return new RecyclerViewAdapter.ViewHolder(view);
         }
 
@@ -242,12 +363,15 @@ public class DrinksActivity extends AppCompatActivity {
             }
 
             holder.nameView.setText(drinks.get(position).getName());
-            holder.priceView.setText("Kshs:"+drinks.get(position).getPrice());
+            holder.priceView.setText("Ksh:"+drinks.get(position).getPrice());
+            holder.ratingView.setText(MyHelper.generateRating());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), DrinkDetailsActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
+                    intent.putExtra("keyword", keyword);
+                    intent.putExtra("activity", "drinks_activity");
                     intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
@@ -256,7 +380,21 @@ public class DrinksActivity extends AppCompatActivity {
                     intent.putExtra("posterurl", drinks.get(position).getPosterurl());
 
                     startActivity(intent);
+                    finish();
                 }
+            });
+
+            holder.addToCart.setOnClickListener(v->{
+                String name = drinks.get(position).getName(), category = drinks.get(position).getCategory(), posterurl = drinks.get(position).getPosterurl();
+                int drink_id = drinks.get(position).getId(), price = drinks.get(position).getPrice();
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                int quantity = 1;
+                boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category,quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
+                if (isAdded) {
+                    setupBadge();
+                    Toast.makeText(getApplicationContext(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
+                }else
+                    Toast.makeText(getApplicationContext(), "Already in Cart", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -264,6 +402,12 @@ public class DrinksActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return drinks.size();
+        }
+
+        public void setFilter(ArrayList<Drink> newDrinks) {
+            drinks = new ArrayList<>();
+            drinks.addAll(newDrinks);
+            notifyDataSetChanged();
         }
 
     }

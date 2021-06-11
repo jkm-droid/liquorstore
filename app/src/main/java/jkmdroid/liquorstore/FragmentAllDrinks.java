@@ -1,10 +1,9 @@
 package jkmdroid.liquorstore;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +36,7 @@ public class FragmentAllDrinks extends Fragment{
     TextView errorView, loadingView;
     ImageView imageError, cartView;
     SqlLiteHelper sqlLiteHelper;
+    TextView viewOrder;
 
     @Nullable
     @Override
@@ -50,11 +48,14 @@ public class FragmentAllDrinks extends Fragment{
         loadingView = view.findViewById(R.id.loading);
         imageError = view.findViewById(R.id.image_error);
         sqlLiteHelper = new SqlLiteHelper(getContext());
+//        viewOrder = view.findViewById(R.id.view_order);
+//        viewOrder.setVisibility(View.VISIBLE);
 
         if (MyHelper.isOnline(getActivity())) {
             loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading Drinks....");
+            loadingView.setText("Loading drinks....");
         }else {
+            loadingView.setVisibility(View.GONE);
             imageError.setVisibility(View.VISIBLE);
             errorView.setVisibility(View.VISIBLE);
             errorView.setText("There is no internet connection!!");
@@ -74,19 +75,16 @@ public class FragmentAllDrinks extends Fragment{
 
     public void setDrinks(ArrayList<Drink> drinks){
         this.drinks = drinks;
-        if (drinks == null) {
-            imageError.setVisibility(View.VISIBLE);
-            errorView.setVisibility(View.VISIBLE);
-            errorView.setText("No drinks found");
-        }
         if (getContext() == null)
             return;
-        listView.setAdapter(new Adapter(getContext(), drinks));
+
         if (drinks.size() > 0){
             imageError.setVisibility(View.GONE);
             loadingView.setVisibility(View.GONE);
             errorView.setVisibility(View.GONE);
+
         }
+        listView.setAdapter(new Adapter(getContext(), drinks));
     }
     interface  OnFragmentRestart{
         void onMoviesReceived();
@@ -110,6 +108,7 @@ public class FragmentAllDrinks extends Fragment{
 
             ((TextView)view.findViewById(R.id.drink_name)).setText(drinks.get(position).getName());
             ((TextView)view.findViewById(R.id.drink_price)).setText("Kshs "+drinks.get(position).getPrice());
+            ((TextView)view.findViewById(R.id.rating)).setText(MyHelper.generateRating());
             ImageView imageView = (ImageView)view.findViewById(R.id.drink_poster);
 
             if (!drinks.get(position).getPosterurl().isEmpty()) {
@@ -127,12 +126,12 @@ public class FragmentAllDrinks extends Fragment{
                 public void onClick(View v) {
                     String name = drinks.get(position).getName(), category = drinks.get(position).getCategory(), posterurl = drinks.get(position).getPosterurl();
                     int drink_id = drinks.get(position).getId(), price = drinks.get(position).getPrice();
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     int quantity = 1;
                     boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category,quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
-                    if (isAdded)
+                    if (isAdded) {
                         Toast.makeText(getActivity(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
-                    else
+                    }else
                         Toast.makeText(getActivity(), "Already in Cart", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -140,7 +139,8 @@ public class FragmentAllDrinks extends Fragment{
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(), DrinkDetailsActivity.class);
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra("activity", "main_activity");
                     intent.putExtra("drink_id", drinks.get(position).getId());
                     intent.putExtra("name", drinks.get(position).getName());
                     intent.putExtra("price", drinks.get(position).getPrice());
@@ -155,4 +155,5 @@ public class FragmentAllDrinks extends Fragment{
             return view;
         }
     }
+
 }
