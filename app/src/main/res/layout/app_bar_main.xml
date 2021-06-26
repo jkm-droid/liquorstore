@@ -5,7 +5,7 @@
     xmlns:tools = "http://schemas.android.com/tools"
     android:layout_width= "match_parent"
     android:layout_height= "match_parent"
-    tools:context= "jkmdroid.liquorstore.MainActivity" >
+    tools:context= "jkmdroid.likastore.MainActivity" >
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:fitsSystemWindows="true"
@@ -23,6 +23,7 @@
             android:layout_height="match_parent">
             <ViewFlipper
                 android:id="@+id/view_flipper"
+                android:background="#DBD0D0"
                 android:requiresFadingEdge="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="170dp"/>

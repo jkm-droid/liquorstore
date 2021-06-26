@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:layout_marginTop="5dp"
     android:background="#EFE9E9"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -17,7 +18,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -41,12 +41,25 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:id="@+id/layout_content"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/search_view"
+                android:padding="10dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text"
+                android:hint="@string/search_for_drinks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:drawableLeftCompat="@drawable/ic_search"
+                android:layout_marginStart="3dp" />
             <TextView
                 android:id="@+id/drinks_category"
                 android:padding="5dp"
@@ -71,7 +84,7 @@
                     <ImageView
                         android:id="@+id/vodka"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
+                        android:layout_height="80dp"/>
 
                     <TextView
                         android:text="@string/vodka"
@@ -89,7 +102,7 @@
                     <ImageView
                         android:id="@+id/beer"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
+                        android:layout_height="80dp"/>
 
                     <TextView
                         android:text="@string/beer"
@@ -107,7 +120,7 @@
                     <ImageView
                         android:id="@+id/whisky"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
+                        android:layout_height="80dp"/>
 
                     <TextView
                         android:text="@string/whisky"
@@ -124,10 +137,27 @@
                     <ImageView
                         android:id="@+id/gin"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
+                        android:layout_height="80dp"/>
 
                     <TextView
                         android:text="@string/gin"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_weight="1"
+                    android:layout_margin="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/soft_drinks"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"/>
+
+                    <TextView
+                        android:text="Soft Drinks"
                         android:gravity="center_horizontal"
                         android:layout_gravity="center_vertical"
                         android:layout_width="match_parent"

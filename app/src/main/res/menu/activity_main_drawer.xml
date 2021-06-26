@@ -13,12 +13,15 @@
         android:icon="@drawable/waiting"
         android:title="@string/order_status" />
     <item
-        android:id="@+id/categories"
-        android:icon="@drawable/alldrinks"
-        android:title="@string/categories" />
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search" />
 
 
-    <item android:title="@string/contact_us">
+    <item
+        android:id="@+id/contacts"
+        android:icon="@drawable/contacts"
+        android:title="@string/contact_us">
         <menu>
             <item
                 android:id="@+id/email"

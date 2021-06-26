@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jkmdroid.liquorstore">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="jkmdroid.likastore">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,28 +12,29 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LiquorStore">
-        <activity android:name=".SearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".OrderActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".CheckOutActivity" />
-        <activity android:name=".CartActivity" />
-        <activity android:name=".DetailsActivity" />
-        <activity
-            android:name=".DrinksActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MainActivity">
+        android:theme="@style/Theme.LiquorStore"
+        tools:replace="android:icon">
+        <activity android:name=".LauncherScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".orders.OrderActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".orders.CheckOutActivity" />
+        <activity android:name=".orders.CartActivity" />
+        <activity android:name=".DetailsActivity" />
+        <activity
+            android:name=".DrinksActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity"/>
     </application>
 
 </manifest>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Liquor Store</string>
+    <string name="app_name">Lika Store</string>
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
     <string name="username_email">Username/Email</string>
@@ -63,7 +63,7 @@
     <string name="total_kshs_4_000">Total: Kshs 4,000</string>
     <string name="confirm_order">Confirm order</string>
     <string name="amount_payable_is_for_4_item_s_6_qty_s">Amount payable is for 4 item(s), 6 Qty(s).</string>
-    <string name="amount_payable_is_for">Amount payable is for:</string>
+    <string name="amount_payable_is_for">Amount payable for:</string>
     <string name="cash_on_delivery">Cash on Delivery</string>
     <string name="select_payment_method">Select payment method</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
@@ -87,4 +87,9 @@
     <string name="contact_us">Contact Us</string>
     <string name="privacy">Privacy</string>
     <string name="terms">Terms</string>
+    <string name="search">Search</string>
+    <string name="search_for_drinks">Search for drinks</string>
+    <string name="enter_amount">Enter amount</string>
+    <string name="lika_store">Lika Store</string>
+    <string name="best_in_liquors">Best in liquors</string>
 </resources>
