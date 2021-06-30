@@ -36,6 +36,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -46,13 +47,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import jkmdroid.likastore.helpers.MyHelper;
 import jkmdroid.likastore.helpers.SearchHelper;
 import jkmdroid.likastore.models.Drink;
 import jkmdroid.likastore.helpers.FlipperHelper;
 import jkmdroid.likastore.helpers.SqlLiteHelper;
 import jkmdroid.likastore.models.MenuModel;
+import jkmdroid.likastore.mpesa.Utilities;
 import jkmdroid.likastore.orders.CartActivity;
 import jkmdroid.likastore.orders.OrderActivity;
 
@@ -113,105 +118,105 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         start_drinks();
     }
 
-    private void setExpendableMenu() {
-        menuAdapter = new MenuAdapter(this, listDataHeader, listDataChild, expandableList);
-        expandableList.setAdapter(menuAdapter);
+//    private void setExpendableMenu() {
+//        menuAdapter = new MenuAdapter(this, listDataHeader, listDataChild, expandableList);
+//        expandableList.setAdapter(menuAdapter);
+//
+//        // Listview Group click listener
+//        expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v,
+//                                        int groupPosition, long id) {
+//                 Toast.makeText(getApplicationContext(),
+//                 "Group Clicked " + listDataHeader.get(groupPosition),
+//                 Toast.LENGTH_SHORT).show();
+//                return false;
+//            }
+//        });
+//
+//        // Listview Group collapsed listener
+//        expandableList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+//
+//            @Override
+//            public void onGroupCollapse(int groupPosition) {
+//                Toast.makeText(getApplicationContext(),
+//                        listDataHeader.get(groupPosition) + " Collapsed",
+//                        Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//
+//        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//
+//            @Override
+//            public boolean onChildClick(ExpandableListView parent, View v,
+//                                        int groupPosition, int childPosition, long id) {
+//                // TODO Auto-generated method stub
+//                Toast.makeText(
+//                        getApplicationContext(),
+//                        listDataHeader.get(groupPosition)
+//                                + " : "
+//                                + listDataChild.get(
+//                                listDataHeader.get(groupPosition)).get(
+//                                childPosition), Toast.LENGTH_SHORT)
+//                        .show();
+//                return false;
+//            }
+//        });
+//    }
 
-        // Listview Group click listener
-        expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
-                 Toast.makeText(getApplicationContext(),
-                 "Group Clicked " + listDataHeader.get(groupPosition),
-                 Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-        // Listview Group collapsed listener
-        expandableList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();
-                return false;
-            }
-        });
-    }
-
-    private void prepareMenuData() {
-        listDataHeader = new ArrayList<MenuModel>();
-        listDataChild = new HashMap<MenuModel, List<String>>();
-        MenuModel cart, orderStatus, categories, contacts, aboutUS;
-        List<String> categoriesHeading, contactsHeading, aboutUsHeading;
-
-        cart = new MenuModel();
-        cart.setItemTitle("My Cart");
-        cart.setIconImage(R.drawable.shopping_cart);
-        listDataHeader.add(cart);
-
-        orderStatus = new MenuModel();
-        orderStatus.setItemTitle("Order Status");
-        orderStatus.setIconImage(R.drawable.waiting);
-        listDataHeader.add(orderStatus);
-
-        categories = new MenuModel();
-        categories.setItemTitle("Categories");
-        categories.setIconImage(R.drawable.alldrinks);
-        listDataHeader.add(categories);
-
-        contacts = new MenuModel();
-        contacts.setItemTitle("Contact Us");
-        contacts.setIconImage(R.drawable.contacts);
-        listDataHeader.add(contacts);
-
-        aboutUS = new MenuModel();
-        aboutUS.setItemTitle("About US");
-        aboutUS.setIconImage(R.drawable.ic_launcher_foreground);
-        listDataHeader.add(aboutUS);
-
-        // Adding child data
-        categoriesHeading = new ArrayList<String>();
-        categoriesHeading.add("Submenu of item 1");
-        categoriesHeading.add("Submenu of item 1");
-        categoriesHeading.add("Submenu of item 1");
-
-        contactsHeading = new ArrayList<String>();
-        contactsHeading.add("Submenu of item 2");
-        contactsHeading.add("Submenu of item 2");
-        contactsHeading.add("Submenu of item 2");
-
-        aboutUsHeading = new ArrayList<String>();
-        aboutUsHeading.add("Submenu of item 2");
-        aboutUsHeading.add("Submenu of item 2");
-        aboutUsHeading.add("Submenu of item 2");
-
-        listDataChild.put(listDataHeader.get(2), categoriesHeading);// Header, Child data
-        listDataChild.put(listDataHeader.get(3), contactsHeading);
-        listDataChild.put(listDataHeader.get(4), aboutUsHeading);
-    }
+//    private void prepareMenuData() {
+//        listDataHeader = new ArrayList<MenuModel>();
+//        listDataChild = new HashMap<MenuModel, List<String>>();
+//        MenuModel cart, orderStatus, categories, contacts, aboutUS;
+//        List<String> categoriesHeading, contactsHeading, aboutUsHeading;
+//
+//        cart = new MenuModel();
+//        cart.setItemTitle("My Cart");
+//        cart.setIconImage(R.drawable.shopping_cart);
+//        listDataHeader.add(cart);
+//
+//        orderStatus = new MenuModel();
+//        orderStatus.setItemTitle("Order Status");
+//        orderStatus.setIconImage(R.drawable.waiting);
+//        listDataHeader.add(orderStatus);
+//
+//        categories = new MenuModel();
+//        categories.setItemTitle("Categories");
+//        categories.setIconImage(R.drawable.alldrinks);
+//        listDataHeader.add(categories);
+//
+//        contacts = new MenuModel();
+//        contacts.setItemTitle("Contact Us");
+//        contacts.setIconImage(R.drawable.contacts);
+//        listDataHeader.add(contacts);
+//
+//        aboutUS = new MenuModel();
+//        aboutUS.setItemTitle("About US");
+//        aboutUS.setIconImage(R.drawable.ic_launcher_foreground);
+//        listDataHeader.add(aboutUS);
+//
+//        // Adding child data
+//        categoriesHeading = new ArrayList<String>();
+//        categoriesHeading.add("Submenu of item 1");
+//        categoriesHeading.add("Submenu of item 1");
+//        categoriesHeading.add("Submenu of item 1");
+//
+//        contactsHeading = new ArrayList<String>();
+//        contactsHeading.add("Submenu of item 2");
+//        contactsHeading.add("Submenu of item 2");
+//        contactsHeading.add("Submenu of item 2");
+//
+//        aboutUsHeading = new ArrayList<String>();
+//        aboutUsHeading.add("Submenu of item 2");
+//        aboutUsHeading.add("Submenu of item 2");
+//        aboutUsHeading.add("Submenu of item 2");
+//
+//        listDataChild.put(listDataHeader.get(2), categoriesHeading);// Header, Child data
+//        listDataChild.put(listDataHeader.get(3), contactsHeading);
+//        listDataChild.put(listDataHeader.get(4), aboutUsHeading);
+//    }
 
     void start_drinks() {
 

@@ -21,6 +21,8 @@ import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,7 +113,11 @@ public class FragmentAllDrinks extends Fragment{
             else view = convertView;
             
             ((TextView)view.findViewById(R.id.drink_name)).setText(drinks.get(position).getName());
-            ((TextView)view.findViewById(R.id.category)).setText(String.format("Category: %s", drinks.get(position).getCategory()));
+            TextView categoryView = (TextView)view.findViewById(R.id.category);
+            if (drinks.get(position).getCategory().contains("_"))
+                categoryView.setText(String.format("Category: %s", drinks.get(position).getCategory().replaceAll("_", " ")));
+            else
+                categoryView.setText(String.format("Category: %s", drinks.get(position).getCategory()));
             ((TextView)view.findViewById(R.id.drink_price)).setText("Kshs "+drinks.get(position).getPrice());
             ((TextView)view.findViewById(R.id.rating)).setText(MyHelper.generateRating());
             ImageView imageView = (ImageView)view.findViewById(R.id.drink_poster);

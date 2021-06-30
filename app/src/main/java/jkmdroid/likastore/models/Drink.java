@@ -11,6 +11,15 @@ public class Drink {
     private String description;
     private String posterurl;
     private String category;
+    private String code;
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 
     public int getId() {
         return id;

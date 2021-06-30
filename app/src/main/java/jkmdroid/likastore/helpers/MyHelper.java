@@ -1,5 +1,6 @@
 package jkmdroid.likastore.helpers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
@@ -10,13 +11,24 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by jkm-droid on 05/04/2021.
  */
 
 public class MyHelper {
+    public static String convert_date(String date) {
+        Long timestamp = Long.parseLong(date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        return dateFormat.format(calendar.getTime());
+    }
+
     public static String generateRating() {
         double min = 4.0, max = 4.7;
         DecimalFormat decimalFormat = new DecimalFormat("#0.0");
@@ -26,7 +38,7 @@ public class MyHelper {
 
     public static String capitalizeCategory(String word){
         String firstLetter = word.substring(0,1);
-        String otherLetters = word.substring(1, word.length());
+        String otherLetters = word.substring(1);
         firstLetter = firstLetter.toUpperCase();
 
         return firstLetter + otherLetters;

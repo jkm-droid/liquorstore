@@ -77,7 +77,10 @@ public class DetailsActivity extends AppCompatActivity {
         textName.setText(name);
         textPrice.setText("Kshs "+price);
         textDescription.setText(description);
-        textCategory.setText(category);
+        if (category.contains("_"))
+            textCategory.setText(category.replaceAll("_", " "));
+        else
+            textCategory.setText(category);
         ratingBar.setRating((float)Float.parseFloat(MyHelper.generateRating()));
 
         if (!posterurl.isEmpty()){
