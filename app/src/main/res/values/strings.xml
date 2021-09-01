@@ -18,7 +18,7 @@
     <string name="telegram">Telegram</string>
     <string name="twitter">Twitter</string>
     <string name="click_here_to_contact_us">Click here to Contact Us</string>
-    <string name="developed_by_j_p"><![CDATA[{ J&P Developers }]]></string>
+    <string name="developed_by_j_p"><![CDATA[{ Oak & Teak Technologies }]]></string>
     <string name="developers">Developers</string>
     <string name="contacts">Contacts</string>
     <string name="telegram_us">Telegram Us</string>
@@ -30,7 +30,7 @@
     <string name="best_in_liquor">Best in Liquor</string>
     <string name="explore_by_category">Explore by Category</string>
     <string name="recommended_drinks">Recommended Drinks</string>
-    <string name="see_all">See All>></string>
+    <string name="see_all">See All Drinks</string>
     <string name="_45_00">$45.00</string>
     <string name="_4_5">4.5</string>
     <string name="white_claw_black">White Claw Black</string>
@@ -55,7 +55,7 @@
     <string name="kshs_5">Kshs 5</string>
     <string name="check_out">Check Out</string>
     <string name="payment_method">Payment Method</string>
-    <string name="lipa_na_m_pesa">Lipa na M-Pesa</string>
+    <string name="lipa_na_m_pesa">Lipa Na M-Pesa</string>
     <string name="delivery_address">Delivery Region</string>
     <string name="add_another_location">Add another location</string>
     <string name="sunfield_house">Sunfield House</string>
@@ -64,7 +64,7 @@
     <string name="confirm_order">Confirm order</string>
     <string name="amount_payable_is_for_4_item_s_6_qty_s">Amount payable is for 4 item(s), 6 Qty(s).</string>
     <string name="amount_payable_is_for">Amount payable for:</string>
-    <string name="cash_on_delivery">Cash on Delivery</string>
+    <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="select_payment_method">Select payment method</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="enter_delivery_location">Enter delivery location</string>
@@ -78,7 +78,7 @@
     <string name="delivered">Your order is on delivery</string>
     <string name="contact">Our team have started delivering your order. If there are any queries concerning this order, please contact us. Thank You</string>
     <string name="beer">Beer</string>
-    <string name="whisky">Whisky</string>
+    <string name="whisky">Whiskey</string>
     <string name="gin">Gin</string>
     <string name="error_search">No drinks found matching your keyword!</string>
     <string name="my_cart">My Cart</string>
@@ -92,4 +92,5 @@
     <string name="enter_amount">Enter amount</string>
     <string name="lika_store">Lika Store</string>
     <string name="best_in_liquors">Best in liquors</string>
+    <string name="soft_drinks">Soft Drinks</string>
 </resources>

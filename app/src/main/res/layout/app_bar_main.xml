@@ -23,7 +23,7 @@
             android:layout_height="match_parent">
             <ViewFlipper
                 android:id="@+id/view_flipper"
-                android:background="#DBD0D0"
+                android:background="@color/backgroundApp"
                 android:requiresFadingEdge="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="170dp"/>
@@ -50,7 +50,7 @@
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAppBar">
+            android:background="#9AC2C8">
         </com.google.android.material.tabs.TabLayout>
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"

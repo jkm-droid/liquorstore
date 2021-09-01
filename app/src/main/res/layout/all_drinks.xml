@@ -33,6 +33,7 @@
             <TextView
                 android:id="@+id/drink_name"
                 android:layout_below="@id/drink_poster"
+                android:textColor="@color/colorIcons"
                 android:layout_margin="1dp"
                 android:text="@string/white_claw_black"
                 android:layout_width="wrap_content"

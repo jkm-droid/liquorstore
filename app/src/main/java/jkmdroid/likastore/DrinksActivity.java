@@ -3,6 +3,7 @@ package jkmdroid.likastore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -83,7 +87,7 @@ public class DrinksActivity extends AppCompatActivity {
 
         if (MyHelper.isOnline(getApplicationContext())) {
             loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading drinks....");
+            loadingView.setText("Getting drinks...Please wait");
         }else {
             imageError.setVisibility(View.VISIBLE);
             errorView.setVisibility(View.VISIBLE);
@@ -101,8 +105,16 @@ public class DrinksActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar) ;
 
+        CollapsingToolbarLayout ctl = findViewById(R.id.collapsing_toolbar);
+        ctl.setCollapsedTitleTextColor(getResources().getColor(R.color.colorIcons));
+        ctl.setExpandedTitleColor(getResources().getColor(R.color.colorIcons));
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        final Drawable arrow = ResourcesCompat.getDrawable(getApplicationContext().getResources(),R.drawable.abc_ic_ab_back_material, getTheme());
+        arrow.setColorFilter(getResources().getColor(R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(arrow);
 
         setImagePoster(keyword);
 
@@ -239,10 +251,10 @@ public class DrinksActivity extends AppCompatActivity {
                 drink.setName(object.getString("drink_name"));
                 drink.setPrice(object.getInt("drink_price"));
                 drink.setDescription(object.getString("drink_description"));
-                drink.setPosterurl(object.getString("posterurl"));
+                drink.setPosterurl(object.getString("poster_url"));
                 drink.setCategory(object.getString("drink_category"));
                 int id = object.getInt("id"), price = object.getInt("drink_price");
-                String name = object.getString("drink_name"), category = object.getString("drink_category"), posterurl = object.getString("posterurl");
+                String name = object.getString("drink_name"), category = object.getString("drink_category"), posterurl = object.getString("poster_url");
                 String description = object.getString("drink_description");
 
                 searchHelper.insert_drink(id, name, price, category, description, posterurl);

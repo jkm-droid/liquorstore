@@ -67,7 +67,7 @@ import static jkmdroid.likastore.Constants.TRANSACTION_TYPE;
  * Created by jkmdroid on 5/31/21.
  */
 public class CheckOutActivity extends AppCompatActivity {
-    TextView messageView, totalView;
+    TextView messageView, totalView, deliveryMessage;
     Button confirmButton;
     SqlLiteHelper sqlLiteHelper;
     OrdersHelper ordersHelper;
@@ -83,6 +83,8 @@ public class CheckOutActivity extends AppCompatActivity {
     AlertDialog alertDialog;
     DecimalFormat format;
     public static final int MULTIPLE_PERMISSIONS = 2;
+    public static final String LNM = "Lipa Na M-pesa";
+    public static final String COD = "Cash On Delivery";
     String[] permissions;
     Drink drink;
     @Override
@@ -101,6 +103,7 @@ public class CheckOutActivity extends AppCompatActivity {
         messageView = findViewById(R.id.message);
         totalView = findViewById(R.id.total_amount);
         confirmButton = findViewById(R.id.confirm_order);
+        deliveryMessage = findViewById(R.id.delivery);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Confirm Order");
@@ -109,68 +112,11 @@ public class CheckOutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        accessToken();
         set_up();
+        //get the lipa na mpesa access token
+        accessToken();
 
-        //request read and receive sms permissions
-        permissions = new String[]{
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.READ_SMS
-        };
-
-        if (!checkPermissions()){
-            ActivityCompat.requestPermissions(CheckOutActivity.this, permissions,MULTIPLE_PERMISSIONS);
-        }
         confirmButton.setOnClickListener(v -> checkPaymentMethod());
-
-    }
-
-    private boolean checkPermissions(){
-        int results;
-        List<String> requiredPermissions = new ArrayList<>();
-        for (String perm : permissions){
-            results = ContextCompat.checkSelfPermission(CheckOutActivity.this, perm);
-            if (results != PackageManager.PERMISSION_GRANTED){
-                requiredPermissions.add(perm);
-            }
-        }
-
-        if (!requiredPermissions.isEmpty()){
-            ActivityCompat.requestPermissions(CheckOutActivity.this, permissions,MULTIPLE_PERMISSIONS);
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MULTIPLE_PERMISSIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                confirmButton.setEnabled(true);
-            } else {
-                confirmButton.setEnabled(false);
-//                ActivityCompat.requestPermissions(CheckOutActivity.this, permissions,MULTIPLE_PERMISSIONS);
-            }
-        }
-    }
-
-    private void accessToken() {
-        darajaApiClient.setGetAccessToken(true);
-        darajaApiClient.mpesaService().getAccessToken().enqueue(new Callback<AccessToken>() {
-            @Override
-            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                if (response.isSuccessful()){
-                    darajaApiClient.setAuthToken(response.body().accessToken);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AccessToken> call, Throwable t) {
-
-            }
-        });
     }
 
     private void set_up() {
@@ -184,11 +130,16 @@ public class CheckOutActivity extends AppCompatActivity {
                 price = cursor.getString(6);//contains the total prices based on drink quantity
                 quantity = cursor.getString(5);
                 name = cursor.getString(2);
-                items.append(quantity).append(" ").append(name).append(" for Kshs ").append(format.format(Integer.parseInt(price))).append("\n");
+                items.append(quantity).append(" ")
+                        .append(name).append(" for Kshs ")
+                        .append(format.format(Integer.parseInt(price))).append("\n");
                 totalPrice += Integer.parseInt(price);
             }
+            int items_no = cursor.getCount();
             cursor.close();
 
+            int fee = (items_no * 10) + 50;
+            deliveryMessage.setText("Delivery+Package Fee for Ksh "+fee);
             messageView.setText(items.toString());
             finalCost = totalPrice + (10 * cursor.getCount());
             totalView.setText(String.format("Total: Kshs %s", format.format(finalCost)));
@@ -233,18 +184,23 @@ public class CheckOutActivity extends AppCompatActivity {
             boolean isError = false;
             EditText phoneEdit = view.findViewById(R.id.phonenumber), locationEdit = view.findViewById(R.id.location);
             TextView error = view.findViewById(R.id.alert_error);
-            phonenumber = phoneEdit.getText().toString();
-            location = locationEdit.getText().toString();
+            phonenumber = phoneEdit.getText().toString().trim();
+            location = locationEdit.getText().toString().trim();
             String err = "";
             //phone number
             if (phonenumber.isEmpty()) {
                 isError = true;
                 err += "\nFill phone number";
             }
-
-            if (phonenumber.length() < 10) {
+            System.out.println(phonenumber.charAt(0)+"-----------------");
+            if(!phonenumber.startsWith("0")){
                 isError = true;
-                err += "\nToo short phone number";
+                err += "\nInvalid phone number";
+            }
+
+            if (phonenumber.length() != 10) {
+                isError = true;
+                err += "\nPhone number invalid length";
             }
 
             //location
@@ -256,9 +212,10 @@ public class CheckOutActivity extends AppCompatActivity {
             if (err.trim().length() > 4)
                 error.setText(err);
             else {
-                if(paymentM.equalsIgnoreCase("Lipa Na M-pesa")) {
-                    showMpesaDialog();
-                }else if(paymentM.equalsIgnoreCase("Cash On Delivery")) {
+                if(paymentM.equalsIgnoreCase(LNM)) {
+                    //display the mpesa prompt to user
+                    performStkPush();
+                }else if(paymentM.equalsIgnoreCase(COD)) {
                     String code = " cod";
                     performServerActivity(code);
                 }
@@ -266,11 +223,28 @@ public class CheckOutActivity extends AppCompatActivity {
         });
     }
 
-    private void showMpesaDialog() {
+    private void accessToken() {
+        darajaApiClient.setGetAccessToken(true);
+        darajaApiClient.mpesaService().getAccessToken().enqueue(new Callback<AccessToken>() {
+            @Override
+            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+                if (response.isSuccessful()){
+                    darajaApiClient.setAuthToken(response.body().accessToken);
+                }
+            }
+            @Override
+            public void onFailure(Call<AccessToken> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void performStkPush() {
         System.out.println("inside payment---------------------------------");
         alertDialog.dismiss();
         progressDialog = new ProgressDialog(CheckOutActivity.this);
-        progressDialog.setMessage("Processing your order...Please wait");
+        progressDialog.setTitle("Processing...");
+        progressDialog.setMessage("An M-Pesa prompt will appear on your phone...Please wait");
         progressDialog.setIndeterminate(false);
         progressDialog.setCancelable(true);
         if (progressDialog != null)
@@ -300,6 +274,8 @@ public class CheckOutActivity extends AppCompatActivity {
                     if (response.isSuccessful()){
                         System.out.println("----------request successful------------------");
                         Timber.e("Message %s", response.body());
+
+                        performServerActivity("LNP");
                     }else {
                         Timber.e("Message %s", response.errorBody().string());
                     }
@@ -316,115 +292,11 @@ public class CheckOutActivity extends AppCompatActivity {
         });
     }
 
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equalsIgnoreCase("mpesa_code")){
-                String message = intent.getStringExtra("message");
-                //extract the code from the message
-                extractMpesaCode(message);
-            }else if(intent.getAction().equalsIgnoreCase("error_code")){
-                System.out.println("Message not found");
-            }
-        }
-    };
-
-
-
-    private void extractMpesaCode(String message) {
-        String code = message.substring(0, message.indexOf(" "));
-        System.out.println(code+"=>code");
-        //listen for messages to get m-pesa code
-        //send the data online
-        performServerActivity(code);
-    }
-
-    public void onStart(){
-        super.onStart();
-        if (checkPermissions()){
-            confirmButton.setEnabled(true);
-        }else{
-            confirmButton.setEnabled(false);
-        }
-        LocalBroadcastManager.getInstance(CheckOutActivity.this).registerReceiver(broadcastReceiver, new IntentFilter("mpesa_code"));
-    }
-    
-    public void onResume(){
-        super.onResume();
-        if (checkPermissions()){
-            confirmButton.setEnabled(true);
-        }else{
-            confirmButton.setEnabled(false);
-        }
-        LocalBroadcastManager.getInstance(CheckOutActivity.this).registerReceiver(broadcastReceiver, new IntentFilter("mpesa_code"));
-    }
-
-    public void onStop(){
-        super.onStop();
-        LocalBroadcastManager.getInstance(CheckOutActivity.this).unregisterReceiver(broadcastReceiver);
-    }
-
-    public void onPause(){
-        super.onPause();
-        LocalBroadcastManager.getInstance(CheckOutActivity.this).unregisterReceiver(broadcastReceiver);
-    }
-
-
-
-    private void extractTransactionDetails(String response) {
-        JSONObject jsonObject, stackCallBack,callbackMetadata;
-        try {
-            jsonObject = new JSONObject(response);
-            stackCallBack = jsonObject.getJSONObject("Body").getJSONObject("stkCallback");
-            String merchantRequestID = stackCallBack.getString("MerchantRequestID");
-            String checkoutRequestID = stackCallBack.getString("CheckoutRequestID");
-            int resultCode = stackCallBack.getInt("ResultCode");
-            System.out.println("\n"+merchantRequestID+"\n"+checkoutRequestID+"\n"+resultCode);
-
-            callbackMetadata = stackCallBack.getJSONObject("CallbackMetadata");
-            JSONArray items = callbackMetadata.getJSONArray("Item");
-
-            JSONObject getItems;
-            String value, name;
-            for (int i = 0;i< items.length();i++){
-                getItems = items.getJSONObject(i);
-                name = getItems.getString("Name");
-
-                if (name.equalsIgnoreCase("Amount")) {
-                    value = getItems.getString("Value");
-                    System.out.println("Values\n"+value);
-
-                }else if(name.equalsIgnoreCase("MpesaReceiptNumber")) {
-                    value = getItems.getString("Value");
-                    System.out.println(value);
-
-                }else if(name.equalsIgnoreCase("TransactionDate")) {
-                    value = getItems.getString("Value");
-                    System.out.println(MyHelper.convert_date(value));
-
-                }else if(name.equalsIgnoreCase("PhoneNumber")) {
-                    value = getItems.getString("Value");
-                    System.out.println(Utilities.sanitizePhoneNumber(value));
-                }
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void performServerActivity(String code) {
-        if (paymentMethod.equalsIgnoreCase("Cash On Delivery")){
+        if (paymentMethod.equalsIgnoreCase(COD)){
             if (alertDialog != null)
                 alertDialog.dismiss();
         }
-        progressDialog = new ProgressDialog(CheckOutActivity.this);
-        progressDialog.setMessage("Sending details for order processing");
-        progressDialog.setIndeterminate(false);
-        progressDialog.setCancelable(true);
-        if (progressDialog != null)
-            progressDialog.show();
 
         Cursor cursor = sqlLiteHelper.get_drinks();
         DecimalFormat format = new DecimalFormat("#,###,###");
@@ -436,7 +308,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 price = cursor.getString(6);//contains the total prices based on drink quantity
                 quantity = cursor.getString(5);
                 name = cursor.getString(2);
-                items.append(quantity).append(" ").append(name).append(" for Kshs ").append(format.format(Integer.parseInt(price))).append("\n/");
+                items.append(quantity).append(" ").append(name).append(" for Ksh ").append(format.format(Integer.parseInt(price))).append("\n/");
                 totalPrice += Integer.parseInt(price);
             }
             cursor.close();
@@ -444,25 +316,36 @@ public class CheckOutActivity extends AppCompatActivity {
         }
 
         order_id = generateOrderId(phonenumber);
-        System.out.println(order_id+"------------------------"+code);
+        System.out.println(order_id+"--------order details----------------"+code);
+        if(paymentMethod.equalsIgnoreCase(LNM))
+            paymentMethod = "LNM";
+        else if(paymentMethod.equalsIgnoreCase(COD))
+            paymentMethod = "COD";
+
         String data = "";
         try {
             data += URLEncoder.encode("order_details", "UTF-8") + "=" + URLEncoder.encode("drinks", "UTF-8") + "&";
             data += URLEncoder.encode("order_id", "UTF-8") + "=" + URLEncoder.encode(order_id, "UTF-8") + "&";
-            data += URLEncoder.encode("phonenumber", "UTF-8") + "=" + URLEncoder.encode(phonenumber, "UTF-8") + "&";
+            data += URLEncoder.encode("phone_number", "UTF-8") + "=" + URLEncoder.encode(phonenumber, "UTF-8") + "&";
             data += URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8")+ "&";
-            data += URLEncoder.encode("paymentmethod", "UTF-8") + "=" + URLEncoder.encode(paymentMethod, "UTF-8")+ "&";
-            data += URLEncoder.encode("totalprice", "UTF-8") + "=" + URLEncoder.encode("Kshs "+format.format(finalCost), "UTF-8")+ "&";
-            data += URLEncoder.encode("transactioncode", "UTF-8") + "=" + URLEncoder.encode(code, "UTF-8")+ "&";
+            data += URLEncoder.encode("payment_method", "UTF-8") + "=" + URLEncoder.encode(paymentMethod, "UTF-8")+ "&";
+            data += URLEncoder.encode("total_price", "UTF-8") + "=" + URLEncoder.encode("Ksh "+format.format(finalCost), "UTF-8")+ "&";
+            data += URLEncoder.encode("payment_code", "UTF-8") + "=" + URLEncoder.encode(code, "UTF-8")+ "&";
             data += URLEncoder.encode("drinks", "UTF-8") + "=" + URLEncoder.encode(items.toString(), "UTF-8");
 
             String url = "https://liquorstore.mblog.co.ke/orders/orders.php";
+            progressDialog = new ProgressDialog(CheckOutActivity.this);
+            progressDialog.setMessage("Sending details for order processing");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(true);
+            if (progressDialog != null)
+                progressDialog.show();
+
             sendDetailsOnline(url, data);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-
 
     private void sendDetailsOnline(String url, String data) {
         @SuppressLint("HandlerLeak")Handler handler = new Handler(){
@@ -478,6 +361,9 @@ public class CheckOutActivity extends AppCompatActivity {
                     ordersHelper.delete_all_orders();
                     //save the details in shared preferences
                     saveOrderDetails(order_id, phonenumber, location, items);
+
+                    //send the bought drinks details to server
+                    getDrinksFromSqliteToServer();
 
                     builder.setMessage("Your order has been received and will be approved shortly...Please wait for a confirmation via a call")
                             .setTitle("Order Received")
@@ -516,17 +402,53 @@ public class CheckOutActivity extends AppCompatActivity {
         thread.start();
     }
 
+    private void getDrinksFromSqliteToServer() {
+        Cursor cursor = sqlLiteHelper.get_drinks();
+
+        if (cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                String drinkId = cursor.getString(1);
+                String drinkName = cursor.getString(2);
+                String drinkDate = cursor.getString(8);
+
+                String link = "https://liquorstore.mblog.co.ke/drinks/sold_drinks.php";
+                String data = "";
+                try {
+                    data += URLEncoder.encode("send_drinks", "UTF-8") + "=" + URLEncoder.encode("send_drinks", "UTF-8") + "&";
+                    data += URLEncoder.encode("drink_id", "UTF-8") + "=" + URLEncoder.encode(drinkId, "UTF-8") + "&";
+                    data += URLEncoder.encode("drink_name", "UTF-8") + "=" + URLEncoder.encode(drinkName, "UTF-8") + "&";
+                    data += URLEncoder.encode("drink_date", "UTF-8") + "=" + URLEncoder.encode(drinkDate, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                //send the details
+                sendDrinksToServer(link, data);
+            }
+        }
+    }
+
+    private void sendDrinksToServer(String link, String data) {
+        System.out.println("----------------sending drinks sold----------------");
+        Thread threadSendDrinks = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+
+                try {
+                    String response = MyHelper.connectOnline(link, data);
+                    System.out.println(response+"------------------------------");
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        threadSendDrinks.start();
+    }
+
+    //save the sent order details to shared preferences
+    //for later comparison
     private void saveOrderDetails(String order_id, String phone, String location, StringBuilder items) {
-//        SharedPreferences preferences = getSharedPreferences(OrderPreferences.OrderDetails.NAME, MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        System.out.println("saving preferences-------------------------------");
-//        System.out.println(order_id+"\n"+phone+"\n"+location+"\n"+items);
-//        editor.putString(OrderPreferences.OrderDetails.PHONE_NUMBER, phone);
-//        editor.putString(OrderPreferences.OrderDetails.LOCATION, location);
-//        editor.putString(OrderPreferences.OrderDetails.ORDER_ID, order_id);
-//        editor.putString(OrderPreferences.OrderDetails.ITEMS, items.toString());
-//        editor.putString(OrderPreferences.OrderDetails.STATUS, "pending");
-//        editor.apply();
+
         ordersHelper.insert_order(order_id, phone, location, items.toString(), "pending");
     }
 

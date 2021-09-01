@@ -35,7 +35,7 @@ public class FragmentHome extends Fragment{
     private ArrayList<Drink> drinks;
     TextView errorView, loadingView, seeAll;
     ImageView imageError;
-    FragmentAllDrinks.OnFragmentRestart onFragmentRestart;
+    OnFragmentRestart onFragmentRestart;
     RecyclerView recyclerView;
     ImageView whiskey, beer, vodka, gin, soft_drinks;
     LinearLayout linearLayout;
@@ -66,22 +66,12 @@ public class FragmentHome extends Fragment{
 
         if (MyHelper.isOnline(getActivity())) {
             loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading drinks....");
+            loadingView.setText("Getting drinks...Please wait");
         }else {
             imageError.setVisibility(View.VISIBLE);
             errorView.setVisibility(View.VISIBLE);
             errorView.setText("There is no internet connection!!");
         }
-
-//        int[] images = {
-//                R.drawable.slide0, R.drawable.slide1, R.drawable.slide2,
-//                R.drawable.slide3, R.drawable.slide4, R.drawable.slide5,
-//                R.drawable.slide6, R.drawable.slide7, R.drawable.slide8,
-//                R.drawable.slide9
-//        };
-//
-//        for (int image : images)
-//            initFlipper(image);
 
         moveToDrinksActivity();
 
@@ -93,17 +83,6 @@ public class FragmentHome extends Fragment{
 
         return gridLayout;
     }
-
-//    private void initFlipper(int image) {
-//        ImageView imageView = new ImageView(getActivity());
-//        imageView.setBackgroundResource(image);
-//        viewFlipper.addView(imageView);
-//        viewFlipper.setFlipInterval(3000);
-//        viewFlipper.setAutoStart(true);
-//
-//        viewFlipper.setInAnimation(getActivity(), android.R.anim.slide_in_left);
-//        viewFlipper.setOutAnimation(getActivity(), android.R.anim.slide_out_right);
-//    }
 
     private void moveToDrinksActivity() {
         whiskey.setOnClickListener(v -> {
@@ -156,10 +135,12 @@ public class FragmentHome extends Fragment{
 
     }
 
-    public void setOnFragmentRestart(FragmentAllDrinks.OnFragmentRestart onFragmentRestart) {
+    public void setOnFragmentRestart(OnFragmentRestart onFragmentRestart) {
         this.onFragmentRestart = onFragmentRestart;
     }
-
+    interface  OnFragmentRestart{
+        void onMoviesReceived();
+    }
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
         ArrayList<Drink> drinks;
         Context context;

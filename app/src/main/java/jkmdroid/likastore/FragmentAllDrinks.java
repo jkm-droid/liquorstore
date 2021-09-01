@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
@@ -31,6 +36,7 @@ import java.util.List;
 import jkmdroid.likastore.models.Drink;
 import jkmdroid.likastore.helpers.MyHelper;
 import jkmdroid.likastore.helpers.SqlLiteHelper;
+import jkmdroid.likastore.orders.CartActivity;
 
 /**
  * Created by jkm-droid on 27/05/2021.
@@ -44,6 +50,15 @@ public class FragmentAllDrinks extends Fragment{
     ImageView imageError, cartView;
     SqlLiteHelper sqlLiteHelper;
     TextView viewOrder;
+    AddDrinkToCart addDrinkToCart;
+
+    FragmentAllDrinks(AddDrinkToCart addDrinkToCart){
+        this.addDrinkToCart = addDrinkToCart;
+    }
+
+    public FragmentAllDrinks() {
+
+    }
 
     @Nullable
     @Override
@@ -60,7 +75,7 @@ public class FragmentAllDrinks extends Fragment{
 
         if (MyHelper.isOnline(getActivity())) {
             loadingView.setVisibility(View.VISIBLE);
-            loadingView.setText("Loading drinks....");
+            loadingView.setText("Getting drinks...Please wait");
         }else {
             loadingView.setVisibility(View.GONE);
             imageError.setVisibility(View.VISIBLE);
@@ -142,6 +157,7 @@ public class FragmentAllDrinks extends Fragment{
                     boolean isAdded = sqlLiteHelper.insert_drink(drink_id, name, price, category,quantity, posterurl,  formatter.format(new Date(System.currentTimeMillis())));
                     if (isAdded) {
                         Toast.makeText(getActivity(), "Drink Added to Cart", Toast.LENGTH_SHORT).show();
+                        addDrinkToCart.callBack();
                     }else
                         Toast.makeText(getActivity(), "Already in Cart", Toast.LENGTH_SHORT).show();
                 }

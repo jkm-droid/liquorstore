@@ -31,10 +31,6 @@
                 android:id="@+id/whatsapp"
                 android:icon="@drawable/whatsapp"
                 android:title="@string/whatsapp" />
-            <item
-                android:id="@+id/telegram"
-                android:icon="@drawable/telegram"
-                android:title="@string/telegram" />
         </menu>
     </item>
 

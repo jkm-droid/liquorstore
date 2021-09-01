@@ -21,6 +21,7 @@
 
             <TextView
                 android:id="@+id/drink_name"
+                android:textColor="@color/colorIcons"
                 android:layout_below="@id/drink_poster"
                 android:layout_margin="3dp"
                 android:text="@string/white_claw_black"

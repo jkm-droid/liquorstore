@@ -2,9 +2,12 @@ package jkmdroid.likastore;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,8 +72,16 @@ public class DetailsActivity extends AppCompatActivity {
 
         startCollapsingToolBar();
 
+        CollapsingToolbarLayout ctl = findViewById(R.id.collapsing_toolbar);
+        ctl.setCollapsedTitleTextColor(getResources().getColor(R.color.colorIcons));
+        ctl.setExpandedTitleColor(getResources().getColor(R.color.colorIcons));
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        final Drawable arrow = ResourcesCompat.getDrawable(getApplicationContext().getResources(),R.drawable.abc_ic_ab_back_material, getTheme());
+        arrow.setColorFilter(getResources().getColor(R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(arrow);
 
         getBundle();
 

@@ -16,7 +16,7 @@ public class Constants {
     public static final String PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
     public static final String TRANSACTION_TYPE = "CustomerPayBillOnline";
     public static final String PARTY_B = "174379"; //same as business shortcode above
-    public static final String CALLBACK_URL = "https://mpesa-requestbin.herokuapp.com/1meiusq1";
+    public static final String CALLBACK_URL = "https://likastore.mblog.co.ke/api/likastore/save_transactions";
     public static final String ACCOUNT_REFERENCE = "LiquorStore";
     public static final String TRANSACTION_DESCRIPTION = "Payment of D";
 }

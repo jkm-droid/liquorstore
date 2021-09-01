@@ -34,9 +34,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -47,17 +47,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import jkmdroid.likastore.helpers.MyHelper;
 import jkmdroid.likastore.helpers.SearchHelper;
 import jkmdroid.likastore.models.Drink;
 import jkmdroid.likastore.helpers.FlipperHelper;
 import jkmdroid.likastore.helpers.SqlLiteHelper;
-import jkmdroid.likastore.models.MenuModel;
-import jkmdroid.likastore.mpesa.Utilities;
 import jkmdroid.likastore.orders.CartActivity;
 import jkmdroid.likastore.orders.OrderActivity;
 
@@ -65,7 +60,7 @@ import jkmdroid.likastore.orders.OrderActivity;
  * Created by jkm-droid on 27/05/2021.
  */
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddDrinkToCart {
     TabLayout tabLayout;
     ViewPager viewPager;
     int selectedTab = 0;
@@ -83,10 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     MenuItem menuItemCart;
     ViewFlipper viewFlipper;
     ArrayList<String> arrayListPoster;
-    MenuAdapter menuAdapter;
-    ExpandableListView expandableList;
-    List<MenuModel> listDataHeader;
-    HashMap<MenuModel, List<String>> listDataChild;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,15 +85,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sqlLiteHelper = new SqlLiteHelper(getApplicationContext());
         flipperHelper = new FlipperHelper(getApplicationContext());
         searchHelper = new SearchHelper(getApplicationContext());
+        fragmentAllDrinks = new FragmentAllDrinks(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
         toolbar.setTitleTextColor(getResources().getColor(R.color.blue_for_buttons));
         setSupportActionBar(toolbar);
 
-//        expandableList = findViewById(R.id.expanded_listview);
-//        setExpendableMenu();
-//        prepareMenuData();
+        CollapsingToolbarLayout ctl = findViewById(R.id.collapsing_toolbar);
+        ctl.setCollapsedTitleTextColor(getResources().getColor(R.color.colorIcons));
+        ctl.setExpandedTitleColor(getResources().getColor(R.color.colorIcons));
 
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -117,106 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         start_drinks();
     }
-
-//    private void setExpendableMenu() {
-//        menuAdapter = new MenuAdapter(this, listDataHeader, listDataChild, expandableList);
-//        expandableList.setAdapter(menuAdapter);
-//
-//        // Listview Group click listener
-//        expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v,
-//                                        int groupPosition, long id) {
-//                 Toast.makeText(getApplicationContext(),
-//                 "Group Clicked " + listDataHeader.get(groupPosition),
-//                 Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//        });
-//
-//        // Listview Group collapsed listener
-//        expandableList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-//
-//            @Override
-//            public void onGroupCollapse(int groupPosition) {
-//                Toast.makeText(getApplicationContext(),
-//                        listDataHeader.get(groupPosition) + " Collapsed",
-//                        Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-//
-//        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v,
-//                                        int groupPosition, int childPosition, long id) {
-//                // TODO Auto-generated method stub
-//                Toast.makeText(
-//                        getApplicationContext(),
-//                        listDataHeader.get(groupPosition)
-//                                + " : "
-//                                + listDataChild.get(
-//                                listDataHeader.get(groupPosition)).get(
-//                                childPosition), Toast.LENGTH_SHORT)
-//                        .show();
-//                return false;
-//            }
-//        });
-//    }
-
-//    private void prepareMenuData() {
-//        listDataHeader = new ArrayList<MenuModel>();
-//        listDataChild = new HashMap<MenuModel, List<String>>();
-//        MenuModel cart, orderStatus, categories, contacts, aboutUS;
-//        List<String> categoriesHeading, contactsHeading, aboutUsHeading;
-//
-//        cart = new MenuModel();
-//        cart.setItemTitle("My Cart");
-//        cart.setIconImage(R.drawable.shopping_cart);
-//        listDataHeader.add(cart);
-//
-//        orderStatus = new MenuModel();
-//        orderStatus.setItemTitle("Order Status");
-//        orderStatus.setIconImage(R.drawable.waiting);
-//        listDataHeader.add(orderStatus);
-//
-//        categories = new MenuModel();
-//        categories.setItemTitle("Categories");
-//        categories.setIconImage(R.drawable.alldrinks);
-//        listDataHeader.add(categories);
-//
-//        contacts = new MenuModel();
-//        contacts.setItemTitle("Contact Us");
-//        contacts.setIconImage(R.drawable.contacts);
-//        listDataHeader.add(contacts);
-//
-//        aboutUS = new MenuModel();
-//        aboutUS.setItemTitle("About US");
-//        aboutUS.setIconImage(R.drawable.ic_launcher_foreground);
-//        listDataHeader.add(aboutUS);
-//
-//        // Adding child data
-//        categoriesHeading = new ArrayList<String>();
-//        categoriesHeading.add("Submenu of item 1");
-//        categoriesHeading.add("Submenu of item 1");
-//        categoriesHeading.add("Submenu of item 1");
-//
-//        contactsHeading = new ArrayList<String>();
-//        contactsHeading.add("Submenu of item 2");
-//        contactsHeading.add("Submenu of item 2");
-//        contactsHeading.add("Submenu of item 2");
-//
-//        aboutUsHeading = new ArrayList<String>();
-//        aboutUsHeading.add("Submenu of item 2");
-//        aboutUsHeading.add("Submenu of item 2");
-//        aboutUsHeading.add("Submenu of item 2");
-//
-//        listDataChild.put(listDataHeader.get(2), categoriesHeading);// Header, Child data
-//        listDataChild.put(listDataHeader.get(3), contactsHeading);
-//        listDataChild.put(listDataHeader.get(4), aboutUsHeading);
-//    }
 
     void start_drinks() {
 
@@ -330,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    String string = "https://play.google.com/store/apps/details?id=jkmdroid.liquorstore";
+    String string = "https://play.google.com/store/apps/details?id=jkmdroid.likastore";
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -355,12 +247,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.privacy:
                 Intent privacy = new Intent(Intent.ACTION_VIEW);
-                privacy.setData(Uri.parse("https://infinity.mblog.co.ke/info/privacy.html"));
+                privacy.setData(Uri.parse("https://liquorstore.mblog.co.ke/info/privacy.html"));
                 startActivity(privacy);
                 break;
             case R.id.terms:
                 Intent terms = new Intent(Intent.ACTION_VIEW);
-                terms.setData(Uri.parse("https://infinity.mblog.co.ke/info/terms.html"));
+                terms.setData(Uri.parse("https://liquorstore.mblog.co.ke/info/terms.html"));
                 startActivity(terms);
                 break;
             case R.id.developers:
@@ -374,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 try {
                     String url = "https://api.whatsapp.com/send?phone=" +
-                            URLEncoder.encode("+254738801655", "UTF-8") + "&text=" + URLEncoder.encode("Hello Infinity Movies", "UTF-8");
+                            URLEncoder.encode("+254799518610", "UTF-8") + "&text=" + URLEncoder.encode("Hello Lika Store", "UTF-8");
                     i.setPackage("com.whatsapp");
                     i.setData(Uri.parse(url));
                     if (i.resolveActivity(packageManager) != null) {
@@ -386,20 +278,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.email:
                 Intent email = new Intent(Intent.ACTION_SEND);
-                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"infinitymovies23@gmail.com"});
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{"stowlika@gmail.com"});
                 email.putExtra(Intent.EXTRA_SUBJECT, "");
-                email.putExtra(Intent.EXTRA_TEXT, "Hello Infinity Movies");
+                email.putExtra(Intent.EXTRA_TEXT, "Hello Lika Store");
 
                 //need this to prompts email client only
                 email.setType("message/rfc822");
 
                 startActivity(Intent.createChooser(email, "Choose an Email client :"));
-                break;
-            case R.id.telegram:
-                String url = "http://t.me/toptierodds";
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse(url));
-                startActivity(Intent.createChooser(intent1, "Choose browser"));
                 break;
             case R.id.share_button:
                 try {
@@ -424,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View actionView = menuItemCart.getActionView();
         cartView = actionView.findViewById(R.id.cart_badge);
+
         setupBadge();
 
         actionView.setOnClickListener(v -> {
@@ -462,10 +349,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drink.setName(object.getString("drink_name"));
                 drink.setPrice(object.getInt("drink_price"));
                 drink.setDescription(object.getString("drink_description"));
-                drink.setPosterurl(object.getString("posterurl"));
+                drink.setPosterurl(object.getString("poster_url"));
                 drink.setCategory(object.getString("drink_category"));
 
-                String name = object.getString("drink_name"), category = object.getString("drink_category"), url = object.getString("posterurl");
+                String name = object.getString("drink_name"), category = object.getString("drink_category"), url = object.getString("poster_url");
                 String desc = object.getString("drink_description");
                 int id = object.getInt("id"), price = object.getInt("drink_price");
 
@@ -554,12 +441,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 postJson2.setOnSuccessListener(object -> {
                     requestSuccessful = true;
                     JSONObject jsonObject;
-                    JSONArray jsonArray = object.getJSONArray("images");
+                    JSONArray jsonArray = object.getJSONArray("flippers");
                     for (int i = 0; i < jsonArray.length(); i++){
                         jsonObject = jsonArray.getJSONObject(i);
                         int id = jsonObject.getInt("id");
                         String name = jsonObject.getString("poster_name");
-                        String posterUrl = jsonObject.getString("posterurl");
+                        String posterUrl = jsonObject.getString("poster_url");
                         flipperHelper.insert_poster(id, name, posterUrl);
                     }
                 });
@@ -586,6 +473,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         thread.start();
+    }
+
+    @Override
+    public void callBack() {
+        setupBadge();
     }
 
     public class MyAdapter extends FragmentPagerAdapter {

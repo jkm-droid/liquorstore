@@ -63,6 +63,7 @@ public class OrderActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         startOrderConfirmation();
     }
 
@@ -132,9 +133,6 @@ public class OrderActivity extends AppCompatActivity {
                                 System.out.println(status+"----------------2---confirmed-----------");
                                 layoutPending.setVisibility(View.GONE);
                                 layoutConfirmed.setVisibility(View.VISIBLE);
-//                                SharedPreferences.Editor editor = preferences.edit();
-//                                editor.putString(OrderPreferences.OrderDetails.STATUS, "confirmed");
-//                                editor.apply();
                                 ordersHelper.update_order_status(orderId, "confirmed");
                                 isConfirmed = true;
                                 //delivered order
@@ -142,9 +140,6 @@ public class OrderActivity extends AppCompatActivity {
                                 System.out.println(status+"----------------3--delivered-----------");
                                 layoutConfirmed.setVisibility(View.GONE);
                                 layoutDelivered.setVisibility(View.VISIBLE);
-//                                SharedPreferences.Editor editor = preferences.edit();
-//                                editor.putString(OrderPreferences.OrderDetails.STATUS, "delivered");
-//                                editor.apply();
                                 ordersHelper.update_order_status(orderId, "delivered");
                                 isDelivered = true;
                             }

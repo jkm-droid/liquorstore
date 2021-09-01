@@ -156,7 +156,7 @@ public class CartActivity extends AppCompatActivity {
             cursor.close();
         }
         DecimalFormat format = new DecimalFormat("#,###,###");
-        int finalCost = totalPrice + (10 * cursor.getCount());
+        int finalCost = totalPrice + 50 + (10 * cursor.getCount());
 
         subTotalView.setText("Kshs "+format.format(totalPrice));
         packView.setText("Kshs "+(10 * cursor.getCount()));
